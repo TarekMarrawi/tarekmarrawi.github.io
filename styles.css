@@ -427,6 +427,8 @@ ul {
   padding: 1.25rem;
   box-shadow: 0 10px 30px rgba(10, 24, 42, 0.05);
   transition: transform var(--transition-base), box-shadow var(--transition-base);
+  content-visibility: auto;
+  contain-intrinsic-size: 420px;
 }
 
 .project-card:hover,
@@ -435,10 +437,45 @@ ul {
   box-shadow: 0 16px 40px rgba(10, 24, 42, 0.08);
 }
 
+.projects-status {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  min-height: 1.4rem;
+}
+
+.projects-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.projects-loading::before {
+  content: '';
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  animation: spin 0.9s linear infinite;
+}
+
+.projects-loading[data-state="ready"]::before,
+.projects-loading[data-state="error"]::before {
+  display: none;
+}
+
 .project-card__media {
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: var(--radius-md);
+}
+
+.project-card__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #f3f3f3;
 }
 
 .project-card__tags {
@@ -518,6 +555,56 @@ ul {
 .project-card__link[aria-disabled="true"] {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.project-card--skeleton {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.project-card__skeleton-media {
+  border-radius: var(--radius-md);
+  background: #f3f3f3;
+  padding-top: 56.25%;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card__skeleton-lines span {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(240, 240, 240, 0.6) 0%, rgba(220, 220, 220, 0.8) 50%, rgba(240, 240, 240, 0.6) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.project-card__skeleton-lines span + span {
+  margin-top: 0.55rem;
+}
+
+.projects-fallback {
+  margin-top: 1rem;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .projects-fallback {

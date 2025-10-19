@@ -1,3 +1,4 @@
+
 (function () {
   const root = document.documentElement;
   const themeToggle = document.getElementById('theme-toggle');
@@ -5,16 +6,46 @@
   const primaryNav = document.querySelector('.primary-nav');
   const projectsGrid = document.getElementById('projects-grid');
   const projectsFallback = document.getElementById('projects-fallback');
+  const projectsLoading = document.getElementById('projects-loading');
   const template = document.getElementById('project-card-template');
+  const skeletonTemplate = document.getElementById('project-skeleton-template');
+  const bootScript = document.getElementById('projects-boot');
   const currentYearEl = document.getElementById('current-year');
   const filterButtons = document.querySelectorAll('.filter-btn');
   const sections = Array.from(document.querySelectorAll('main section, footer#contact'));
 
   const THEME_KEY = 'tarekmarrawi-theme';
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const CACHE_KEY = 'projects:v1';
+  const CACHE_VERSION = 'v1';
+  const PLACEHOLDER_IMAGE = 'data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/';
+  const requestIdle = window.requestIdleCallback || function (cb) {
+    return window.setTimeout(() => {
+      cb({ didTimeout: true, timeRemaining: () => 0 });
+    }, 32);
+  };
+  const cancelIdle = window.cancelIdleCallback || window.clearTimeout;
+
+  let pendingIdleHandle = null;
+  let pendingQueue = [];
+  let pendingStatusMessage = '';
+
+  let bootProjects = [];
+  if (bootScript?.textContent) {
+    try {
+      const parsed = JSON.parse(bootScript.textContent);
+      if (Array.isArray(parsed)) {
+        bootProjects = parsed;
+      }
+    } catch (error) {
+      console.warn('Unable to parse boot projects', error);
+    }
+  }
+
   const state = {
-    projects: [],
-    activeFilter: 'all'
+    allProjects: bootProjects.slice(),
+    activeFilter: 'all',
+    hasHydrated: false
   };
 
   function setTheme(theme) {
@@ -59,68 +90,164 @@
     return link;
   }
 
-  function renderProjects() {
-    if (!projectsGrid) return;
-    projectsGrid.innerHTML = '';
-    const filtered = state.projects.filter((project) => {
-      if (state.activeFilter === 'all') return true;
-      return project.tags.some((tag) => tag.toLowerCase() === state.activeFilter.toLowerCase());
+  function createProjectCard(project) {
+    const card = template.content.firstElementChild.cloneNode(true);
+    const image = card.querySelector('img');
+    const tags = card.querySelector('.project-card__tags');
+    const title = card.querySelector('.project-card__title');
+    const summary = card.querySelector('.project-card__summary');
+    const description = card.querySelector('.project-card__description');
+    const techList = card.querySelector('.project-card__tech');
+    const impact = card.querySelector('.project-card__impact');
+    const links = card.querySelector('.project-card__links');
+    const status = card.querySelector('.project-card__status');
+
+    const imageSrc = project.image || PLACEHOLDER_IMAGE;
+    image.src = imageSrc;
+    image.alt = project.title ? `Illustration for ${project.title}` : 'Project illustration';
+    image.loading = 'lazy';
+    image.width = project.imageWidth || 1200;
+    image.height = project.imageHeight || 675;
+
+    tags.textContent = Array.isArray(project.tags) ? project.tags.join(' · ') : '';
+    title.textContent = project.title || 'Untitled project';
+    summary.textContent = project.summary || '';
+    description.textContent = project.description || '';
+    impact.textContent = project.impact || '';
+
+    techList.innerHTML = '';
+    (project.tech || []).forEach((item) => techList.appendChild(createTechBadge(item)));
+
+    links.innerHTML = '';
+    const linkLabels = {
+      demo: 'Demo',
+      code: 'Code',
+      writeup: 'Write-up'
+    };
+    let hasLiveLink = false;
+    Object.entries(linkLabels).forEach(([key, label]) => {
+      const href = project.links?.[key];
+      const linkEl = createLink(label, href);
+      if (href && href !== 'coming-soon' && href !== '#') {
+        hasLiveLink = true;
+      }
+      links.appendChild(linkEl);
     });
 
-    if (filtered.length === 0) {
+    if (project.status === 'coming-soon' || !hasLiveLink) {
+      status.hidden = false;
+    }
+
+    card.dataset.tags = (project.tags || []).join(',');
+    return card;
+  }
+
+  function clearGrid() {
+    if (!projectsGrid) return;
+    projectsGrid.replaceChildren();
+  }
+
+  function updateLoadingState(state, message) {
+    if (!projectsLoading) return;
+    if (message) {
+      projectsLoading.textContent = message;
+    }
+    projectsLoading.dataset.state = state;
+  }
+
+  function clearSkeleton() {
+    if (!projectsGrid) return;
+    projectsGrid.querySelectorAll('.project-card--skeleton').forEach((node) => node.remove());
+  }
+
+  function showSkeleton(count) {
+    if (!projectsGrid || !skeletonTemplate) return;
+    const skeletons = document.createDocumentFragment();
+    for (let index = 0; index < count; index += 1) {
+      const clone = skeletonTemplate.content.firstElementChild.cloneNode(true);
+      skeletons.appendChild(clone);
+    }
+    projectsGrid.appendChild(skeletons);
+  }
+
+  function cancelPendingIdle() {
+    if (pendingIdleHandle !== null) {
+      cancelIdle(pendingIdleHandle);
+      pendingIdleHandle = null;
+    }
+    pendingQueue = [];
+  }
+
+  function scheduleRemainingProjects(queue) {
+    if (!queue.length) {
+      clearSkeleton();
+      return;
+    }
+    pendingQueue = queue.slice();
+    const runner = (deadline) => {
+      if (!projectsGrid) return;
+      let timeRemaining = typeof deadline.timeRemaining === 'function' ? deadline.timeRemaining() : 0;
+      if (!deadline.didTimeout && timeRemaining <= 0) {
+        timeRemaining = 12;
+      }
+      while (pendingQueue.length && (deadline.didTimeout || timeRemaining > 5)) {
+        const project = pendingQueue.shift();
+        const card = createProjectCard(project);
+        projectsGrid.appendChild(card);
+        timeRemaining = typeof deadline.timeRemaining === 'function' ? deadline.timeRemaining() : 0;
+      }
+      if (pendingQueue.length) {
+        pendingIdleHandle = requestIdle(runner);
+      } else {
+        pendingIdleHandle = null;
+        clearSkeleton();
+        updateLoadingState('ready', pendingStatusMessage || 'Projects loaded.');
+        pendingStatusMessage = '';
+      }
+    };
+    pendingIdleHandle = requestIdle(runner);
+  }
+
+  function filterProjects(list) {
+    return list.filter((project) => {
+      if (state.activeFilter === 'all') return true;
+      return (project.tags || []).some((tag) => tag.toLowerCase() === state.activeFilter.toLowerCase());
+    });
+  }
+
+  function renderProjects(list) {
+    if (!projectsGrid || !template) return;
+    cancelPendingIdle();
+    clearSkeleton();
+    const filtered = filterProjects(list);
+
+    if (!filtered.length) {
+      clearGrid();
       projectsFallback.hidden = false;
       projectsFallback.textContent = 'No projects match this focus yet. Try another filter.';
+      updateLoadingState('ready', 'No matching projects available right now.');
+      pendingStatusMessage = '';
       return;
     }
 
     projectsFallback.hidden = true;
-
-    filtered.forEach((project) => {
-      const card = template.content.firstElementChild.cloneNode(true);
-      const image = card.querySelector('img');
-      const tags = card.querySelector('.project-card__tags');
-      const title = card.querySelector('.project-card__title');
-      const summary = card.querySelector('.project-card__summary');
-      const description = card.querySelector('.project-card__description');
-      const techList = card.querySelector('.project-card__tech');
-      const impact = card.querySelector('.project-card__impact');
-      const links = card.querySelector('.project-card__links');
-      const status = card.querySelector('.project-card__status');
-
-      image.src = project.image || 'assets/placeholder-project.svg';
-      image.alt = `Illustration for ${project.title}`;
-      tags.textContent = project.tags.join(' · ');
-      title.textContent = project.title;
-      summary.textContent = project.summary;
-      description.textContent = project.description;
-      impact.textContent = project.impact;
-
-      techList.innerHTML = '';
-      project.tech.forEach((item) => techList.appendChild(createTechBadge(item)));
-
-      links.innerHTML = '';
-      const linkLabels = {
-        demo: 'Demo',
-        code: 'Code',
-        writeup: 'Write-up'
-      };
-      let hasLiveLink = false;
-      Object.entries(linkLabels).forEach(([key, label]) => {
-        const href = project.links?.[key];
-        const linkEl = createLink(label, href);
-        if (href && href !== 'coming-soon' && href !== '#') {
-          hasLiveLink = true;
-        }
-        links.appendChild(linkEl);
-      });
-
-      if (project.status === 'coming-soon' || !hasLiveLink) {
-        status.hidden = false;
-      }
-
-      card.dataset.tags = project.tags.join(',');
-      projectsGrid.appendChild(card);
+    clearGrid();
+    const initial = filtered.slice(0, 4);
+    const remainder = filtered.slice(4);
+    const fragment = document.createDocumentFragment();
+    initial.forEach((project) => {
+      fragment.appendChild(createProjectCard(project));
     });
+    projectsGrid.appendChild(fragment);
+
+    if (remainder.length) {
+      updateLoadingState('loading', 'Rendering more projects…');
+      showSkeleton(Math.min(remainder.length, 4));
+      scheduleRemainingProjects(remainder);
+    } else {
+      updateLoadingState('ready', pendingStatusMessage || 'Projects loaded.');
+      pendingStatusMessage = '';
+    }
   }
 
   function setActiveFilter(filter) {
@@ -134,7 +261,7 @@
         btn.removeAttribute('aria-pressed');
       }
     });
-    renderProjects();
+    renderProjects(state.allProjects);
   }
 
   function initFilters() {
@@ -146,23 +273,80 @@
     });
   }
 
+  function normaliseProjects(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw
+      .map((item) => ({
+        ...item,
+        tags: Array.isArray(item.tags) ? item.tags : [],
+        tech: Array.isArray(item.tech) ? item.tech : [],
+        links: typeof item.links === 'object' && item.links !== null ? item.links : {},
+        image: item.image || PLACEHOLDER_IMAGE,
+        imageWidth: item.imageWidth || 1200,
+        imageHeight: item.imageHeight || 675
+      }))
+      .slice(0, 20);
+  }
+
+  function readCache() {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      const payload = JSON.parse(raw);
+      if (payload.version !== CACHE_VERSION) return null;
+      return normaliseProjects(payload.data);
+    } catch (error) {
+      console.warn('Unable to read cached projects', error);
+      return null;
+    }
+  }
+
+  function writeCache(data) {
+    try {
+      const payload = {
+        version: CACHE_VERSION,
+        data
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+    } catch (error) {
+      console.warn('Unable to cache projects', error);
+    }
+  }
+
+  function hydrateProjects(projects, { announceUpdated } = { announceUpdated: false }) {
+    if (!projects.length) return;
+    state.allProjects = projects;
+    pendingStatusMessage = announceUpdated ? 'Projects updated with the latest work.' : 'Projects ready.';
+    renderProjects(state.allProjects);
+  }
+
   function fetchProjects() {
     if (!projectsGrid || !template) return;
-    fetch('projects.json')
+    fetch('projects.json', { cache: 'no-cache' })
       .then((response) => {
         if (!response.ok) throw new Error('Network response was not ok');
         return response.json();
       })
       .then((data) => {
-        state.projects = Array.isArray(data) ? data.slice(0, 12) : [];
-        if (!state.projects.length) {
+        const normalised = normaliseProjects(data);
+        if (!normalised.length) {
           throw new Error('No projects available');
         }
-        renderProjects();
+        writeCache(normalised);
+        hydrateProjects(normalised, { announceUpdated: state.hasHydrated });
+        state.hasHydrated = true;
       })
-      .catch(() => {
-        projectsFallback.hidden = false;
-        projectsFallback.textContent = 'Unable to load projects right now. Please try again later.';
+      .catch((error) => {
+        console.warn('Unable to fetch latest projects', error);
+        if (!state.allProjects.length) {
+          projectsFallback.hidden = false;
+          projectsFallback.textContent = 'Unable to load projects right now. Please try again later.';
+          updateLoadingState('error', 'Projects failed to load.');
+          pendingStatusMessage = '';
+        } else {
+          updateLoadingState('ready', 'Showing cached projects (offline).');
+          pendingStatusMessage = '';
+        }
       });
   }
 
@@ -220,6 +404,20 @@
     initSmoothNav(sectionNav);
     initObserver();
     initFilters();
+
+    if (bootProjects.length) {
+      hydrateProjects(normaliseProjects(bootProjects));
+    } else if (projectsGrid) {
+      showSkeleton(4);
+      updateLoadingState('loading', 'Loading highlighted work…');
+    }
+
+    const cached = readCache();
+    if (cached && cached.length) {
+      hydrateProjects(cached);
+      state.hasHydrated = true;
+    }
+
     fetchProjects();
   }
 
