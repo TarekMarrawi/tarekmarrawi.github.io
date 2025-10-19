@@ -1,0 +1,41 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+
+      - name: Build static site
+        run: |
+          echo "No build step required for static site"
+
+      - name: Run Lighthouse CI
+        id: lighthouse
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: false
+
+      - name: Check Lighthouse scores
+        run: |
+          node ./scripts/validate-lighthouse.js
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          LHCI_RESULTS_PATH: ${{ steps.lighthouse.outputs.lhr }}

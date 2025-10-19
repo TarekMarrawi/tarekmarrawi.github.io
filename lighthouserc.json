@@ -1,0 +1,21 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": ".",
+      "numberOfRuns": 1,
+      "settings": {
+        "emulatedFormFactor": "mobile",
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638.4,
+          "cpuSlowdownMultiplier": 4,
+          "downloadThroughputKbps": 1638.4,
+          "uploadThroughputKbps": 732.2
+        }
+      }
+    },
+    "assert": {
+      "assertions": {}
+    }
+  }
+}

@@ -13,8 +13,8 @@
   <meta property="og:image" content="https://tarekmarrawi.github.io/assets/placeholder-project.svg">
   <link rel="canonical" href="https://tarekmarrawi.github.io/">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%234DA3FF'/%3E%3Cpath d='M9 9h14v14H9z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3Cpath d='M12 21l4-10 4 10' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preload" href="./projects.json" as="fetch" type="application/json" crossorigin="anonymous">
   <link rel="stylesheet" href="styles.css">
-  <script defer src="scripts.js"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -69,7 +69,7 @@
         </div>
       </div>
       <figure class="hero__visual" aria-hidden="true">
-        <img src="assets/placeholder-project.svg" alt="" loading="lazy">
+        <img src="assets/placeholder-project.svg" alt="" loading="lazy" width="360" height="360">
       </figure>
     </div>
     <nav class="section-nav" aria-label="Section">
@@ -181,13 +181,16 @@
           <button type="button" class="filter-btn" data-filter="Healthcare">Healthcare</button>
           <button type="button" class="filter-btn" data-filter="Simulation">Simulation</button>
         </div>
+        <div class="projects-status" aria-live="polite" role="status">
+          <span id="projects-loading" class="projects-loading" data-state="loading">Loading highlighted work…</span>
+        </div>
         <div id="projects-grid" class="projects-grid" role="list" aria-live="polite"></div>
         <p id="projects-fallback" class="projects-fallback" hidden>Projects will appear here once loaded. Check your connection or refresh.</p>
       </div>
       <template id="project-card-template">
         <article class="project-card" role="listitem">
           <figure class="project-card__media" aria-hidden="true">
-            <img src="assets/placeholder-project.svg" alt="" loading="lazy">
+            <img src="assets/placeholder-project.svg" alt="" loading="lazy" width="1200" height="675">
           </figure>
           <div class="project-card__content">
             <div class="project-card__head">
@@ -200,6 +203,16 @@
             <ul class="project-card__tech"></ul>
             <p class="project-card__impact"></p>
             <div class="project-card__links" aria-label="Project links"></div>
+          </div>
+        </article>
+      </template>
+      <template id="project-skeleton-template">
+        <article class="project-card project-card--skeleton" aria-hidden="true">
+          <div class="project-card__skeleton-media"></div>
+          <div class="project-card__skeleton-lines">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
         </article>
       </template>
@@ -254,5 +267,7 @@
     </div>
     <p class="footer__note">© <span id="current-year"></span> Tarek Marrawi. Portfolio site crafted with accessibility, performance, and AI precision.</p>
   </footer>
+  <script type="application/json" id="projects-boot">[{"id":"realvoice","title":"RealVoice — TTS Infrastructure & Orchestration","summary":"Kafka-like queue for large-scale TTS with prioritization, retries, and auditing.","description":"Designed a resilient orchestration layer for text-to-speech workloads with smart scheduling, GPU pooling, and audit trails. Integrated health dashboards and autoscaling to handle bursty enterprise demand.","tech":["Python","FastAPI","Redis","ONNX/ORT","Docker","Grafana"],"tags":["TTS","Edge","Infra","Cost"],"impact":">99% job success; burst-tolerant SLAs with live telemetry.","links":{"demo":"https://example.com/realvoice-demo","code":"https://github.com/your-username/realvoice","writeup":"https://example.com/realvoice-case-study"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675},{"id":"phonemex-pro","title":"PhonemeX Pro — Offline Phoneme & Viseme Toolkit","summary":"Cross-platform phoneme extraction and lip-sync toolkit with eSpeak-NG integration.","description":"Led Unity native plugin development combining eSpeak-NG (WASM/native) with editor tooling for rapid voice calibration. Enabled studios to ship reliable lip-sync without cloud dependencies.","tech":["Unity","C#","eSpeak-NG"],"tags":["Speech","TTS","Phoneme"],"impact":"Offline, cross-voice alignment with configurable viseme curves.","links":{"demo":"https://example.com/phonemex-demo","code":null,"writeup":"https://example.com/phonemex-overview"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675},{"id":"phonemeflow","title":"PhonemeFlow — Grapheme→Phoneme Transformer","summary":"Seq2seq phonemizer with compact runtime dictionaries and validation harness.","description":"Built multilingual G2P transformer with distilled runtime, beam search calibration, and lexicon export pipeline. Delivered evaluation harness for linguistic QA and benchmarking.","tech":["PyTorch","Transformers"],"tags":["NLP","Speech","Transformer"],"impact":"Accurate multilingual G2P with exportable dictionaries and QA automation.","links":{"demo":"https://example.com/phonemeflow-demo","code":"https://github.com/your-username/phonemeflow","writeup":"https://example.com/phonemeflow-insights"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675}]</script>
+  <script defer src="scripts.js"></script>
 </body>
 </html>
