@@ -1,0 +1,123 @@
+[
+  {
+    "id": "realvoice",
+    "title": "RealVoice — TTS Infrastructure & Orchestration",
+    "summary": "Kafka-like queue for large-scale TTS with prioritization, retries, and auditing.",
+    "description": "Designed a resilient orchestration layer for text-to-speech workloads with smart scheduling, GPU pooling, and audit trails. Integrated health dashboards and autoscaling to handle bursty enterprise demand.",
+    "tech": ["Python", "FastAPI", "Redis", "ONNX/ORT", "Docker", "Grafana"],
+    "tags": ["TTS", "Edge", "Infra", "Cost"],
+    "impact": ">99% job success; burst-tolerant SLAs with live telemetry.",
+    "links": {
+      "demo": "https://example.com/realvoice-demo",
+      "code": "https://github.com/your-username/realvoice",
+      "writeup": "https://example.com/realvoice-case-study"
+    },
+    "image": "assets/placeholder-project.svg"
+  },
+  {
+    "id": "phonemex-pro",
+    "title": "PhonemeX Pro — Offline Phoneme & Viseme Toolkit",
+    "summary": "Cross-platform phoneme extraction and lip-sync toolkit with eSpeak-NG integration.",
+    "description": "Led Unity native plugin development combining eSpeak-NG (WASM/native) with editor tooling for rapid voice calibration. Enabled studios to ship reliable lip-sync without cloud dependencies.",
+    "tech": ["Unity", "C#", "eSpeak-NG"],
+    "tags": ["Speech", "TTS", "Phoneme"],
+    "impact": "Offline, cross-voice alignment with configurable viseme curves.",
+    "links": {
+      "demo": "https://example.com/phonemex-demo",
+      "code": null,
+      "writeup": "https://example.com/phonemex-overview"
+    },
+    "image": "assets/placeholder-project.svg"
+  },
+  {
+    "id": "phonemeflow",
+    "title": "PhonemeFlow — Grapheme→Phoneme Transformer",
+    "summary": "Seq2seq phonemizer with compact runtime dictionaries and validation harness.",
+    "description": "Built multilingual G2P transformer with distilled runtime, beam search calibration, and lexicon export pipeline. Delivered evaluation harness for linguistic QA and benchmarking.",
+    "tech": ["PyTorch", "Transformers"],
+    "tags": ["NLP", "Speech", "Transformer"],
+    "impact": "Accurate multilingual G2P with exportable dictionaries and QA automation.",
+    "links": {
+      "demo": "https://example.com/phonemeflow-demo",
+      "code": "https://github.com/your-username/phonemeflow",
+      "writeup": "https://example.com/phonemeflow-insights"
+    },
+    "image": "assets/placeholder-project.svg"
+  },
+  {
+    "id": "arabic-tts-dataset",
+    "title": "Arabic TTS Dataset — Semi-Automatic Alignment",
+    "summary": "Whisper-based alignment, diacritic handling, and QA filters for high-fidelity pairs.",
+    "description": "Automated Arabic speech-text alignment with Whisper variants, diacritic restoration, and human-in-loop QA surfaces. Delivered dataset packaging tools for reproducible curation.",
+    "tech": ["Whisper", "Python", "PyTorch"],
+    "tags": ["TTS", "Dataset", "Arabic", "Healthcare"],
+    "impact": "Higher clarity/prosody and faster dataset creation cycles.",
+    "links": {
+      "demo": null,
+      "code": "https://github.com/your-username/arabic-tts-dataset",
+      "writeup": "https://example.com/arabic-tts-dataset"
+    },
+    "image": "assets/placeholder-project.svg"
+  },
+  {
+    "id": "ejaaz",
+    "title": "Ejaaz — Blinkist-style Summaries (Full Stack)",
+    "summary": "n8n pipelines for ingest→summarize→QA; TTS for audio and mobile playback.",
+    "description": "Designed content ingestion to LLM summarization pipeline with n8n, human QA loops, and multilingual TTS playback. Delivered Flutter mobile app and React admin for editorial insights.",
+    "tech": ["n8n", "Flutter", "React+TS", "Firebase", "Chatterbox-TTS"],
+    "tags": ["LLM", "TTS", "Mobile", "Workflow"],
+    "impact": "Automated content factory with offline playback and editorial analytics.",
+    "links": {
+      "demo": "https://example.com/ejaaz-demo",
+      "code": "https://github.com/your-username/ejaaz",
+      "writeup": "https://example.com/ejaaz-case-study"
+    },
+    "image": "assets/placeholder-project.svg"
+  },
+  {
+    "id": "edge-inference",
+    "title": "Edge Inference Pipelines — Mobile/WebGL",
+    "summary": "Quantized LLM/TTS with caching, offline fallback, and low-latency UI.",
+    "description": "Implemented ONNX/ORT edge runtime with quantization-aware scheduling and offline fallback packs. Delivered telemetry for latency budgets across Android, iOS, and WebGL clients.",
+    "tech": ["ONNX/ORT", "WebGL", "Android/iOS", "FastAPI"],
+    "tags": ["Edge", "LLM", "TTS", "Latency"],
+    "impact": ">90% cost reduction and sub-second responses on-device.",
+    "links": {
+      "demo": "https://example.com/edge-inference-demo",
+      "code": "https://github.com/your-username/edge-inference",
+      "writeup": "https://example.com/edge-inference-whitepaper"
+    },
+    "image": "assets/placeholder-project.svg"
+  },
+  {
+    "id": "digital-twin",
+    "title": "Digital Twin Platforms — Industrial Training/Planning",
+    "summary": "CAD→interactive simulation with layout optimization and safety scenarios.",
+    "description": "Directed multi-site delivery of digital twin platforms integrating NVIDIA Omniverse pipelines, training modules, and telemetry dashboards to optimize plant operations and safety drills.",
+    "tech": ["Unity", "NVIDIA Omniverse", "USD", "C#"],
+    "tags": ["Simulation", "Industrial", "3D"],
+    "impact": "Accelerated deployment timelines with higher realism and analytics.",
+    "links": {
+      "demo": "coming-soon",
+      "code": null,
+      "writeup": "https://example.com/digital-twin-overview"
+    },
+    "image": "assets/placeholder-project.svg",
+    "status": "coming-soon"
+  },
+  {
+    "id": "multi-agent-personas",
+    "title": "Multi-Agent Personas — Coordination & Evaluation",
+    "summary": "Agent collaboration with memory/coherence checks and dialogue metrics.",
+    "description": "Built evaluation framework for multi-agent personas with context memory, guardrails, and scoring dashboards. Enabled rapid experimentation with persona orchestration and prompt routing.",
+    "tech": ["Python", "LLM Orchestration", "FastAPI"],
+    "tags": ["LLM", "Multi-Agent", "Evaluation"],
+    "impact": "Improved task success and measurable dialogue coherence.",
+    "links": {
+      "demo": "https://example.com/multi-agent-demo",
+      "code": "https://github.com/your-username/multi-agent-personas",
+      "writeup": "https://example.com/multi-agent-report"
+    },
+    "image": "assets/placeholder-project.svg"
+  }
+]

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Project placeholder</title>
+  <desc id="desc">Abstract gradient placeholder graphic</desc>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4DA3FF" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#0B2347" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="24" fill="url(#grad)"/>
+  <g fill="#ffffff" fill-opacity="0.85">
+    <circle cx="112" cy="96" r="32"/>
+    <circle cx="184" cy="148" r="18"/>
+    <circle cx="132" cy="188" r="12"/>
+    <rect x="260" y="92" width="260" height="32" rx="16"/>
+    <rect x="260" y="140" width="200" height="20" rx="10"/>
+    <rect x="260" y="172" width="220" height="20" rx="10"/>
+  </g>
+</svg>
