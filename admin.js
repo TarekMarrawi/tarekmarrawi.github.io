@@ -20,10 +20,382 @@ const copyContentBtn = document.getElementById('copy-content');
 const addProjectBtn = document.getElementById('add-project');
 const downloadProjectsBtn = document.getElementById('download-projects');
 const copyProjectsBtn = document.getElementById('copy-projects');
+const publishButton = document.getElementById('publish-updates');
 const toastEl = document.getElementById('toast');
 const pageButtons = Array.from(document.querySelectorAll('[data-page-target]'));
 const pageSections = Array.from(document.querySelectorAll('[data-page]'));
 let activePage = null;
+
+const authOverlay = document.getElementById('auth-overlay');
+const authForm = document.getElementById('auth-form');
+const authTokenInput = document.getElementById('auth-token');
+const authStatusMessage = document.getElementById('auth-status-message');
+const authSubmitButton = document.getElementById('auth-submit');
+const authUserLabel = document.getElementById('auth-user-label');
+const openAuthButton = document.getElementById('open-auth');
+const signOutButton = document.getElementById('sign-out');
+
+const GITHUB_OWNER = 'tarekmarrawi';
+const GITHUB_REPO = 'tarekmarrawi.github.io';
+const GITHUB_BRANCH = 'main';
+const AUTH_STORAGE_KEY = 'portfolio-admin-auth';
+const publishButtonDefaultLabel = publishButton?.textContent || 'Publish to GitHub';
+const authSubmitDefaultLabel = authSubmitButton?.textContent || 'Sign in';
+
+let githubAuth = { token: null, user: null };
+let isPublishing = false;
+
+function setAuthStatus(message = '', variant = 'info') {
+  if (!authStatusMessage) return;
+  authStatusMessage.textContent = message;
+  if (variant) {
+    authStatusMessage.dataset.variant = variant;
+  } else {
+    delete authStatusMessage.dataset.variant;
+  }
+}
+
+function setAuthLoading(isLoading) {
+  if (authSubmitButton) {
+    authSubmitButton.disabled = isLoading;
+    authSubmitButton.textContent = isLoading ? 'Signing in…' : authSubmitDefaultLabel;
+  }
+  if (authTokenInput) {
+    authTokenInput.disabled = isLoading;
+  }
+}
+
+function serialiseUser(user = {}) {
+  return {
+    login: user.login || '',
+    name: user.name || '',
+    email: user.email || ''
+  };
+}
+
+function syncPublishButtonState() {
+  if (!publishButton) return;
+  publishButton.disabled = !githubAuth.token || isPublishing;
+  publishButton.textContent = isPublishing ? 'Publishing…' : publishButtonDefaultLabel;
+}
+
+function persistAuth(token, user) {
+  githubAuth = { token, user: user ? serialiseUser(user) : null };
+  try {
+    sessionStorage.setItem(
+      AUTH_STORAGE_KEY,
+      JSON.stringify({ token, user: githubAuth.user })
+    );
+  } catch (error) {
+    console.warn('Unable to persist authentication session', error);
+  }
+  updateAuthUI();
+}
+
+function clearStoredAuth() {
+  try {
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
+  } catch (error) {
+    console.warn('Unable to clear stored authentication', error);
+  }
+}
+
+function updateAuthUI() {
+  const isAuthed = Boolean(githubAuth.token);
+  if (authUserLabel) {
+    authUserLabel.textContent = isAuthed
+      ? `Signed in as ${githubAuth.user?.login || 'authenticated user'}`
+      : 'Not authenticated';
+  }
+  if (signOutButton) {
+    signOutButton.hidden = !isAuthed;
+    signOutButton.disabled = !isAuthed;
+  }
+  if (openAuthButton) {
+    openAuthButton.textContent = isAuthed ? 'Switch account' : 'Sign in';
+  }
+
+  if (isAuthed) {
+    document.body.classList.remove('auth-locked');
+    if (authOverlay && !authOverlay.hidden) {
+      authOverlay.hidden = true;
+    }
+  } else {
+    document.body.classList.add('auth-locked');
+    if (authOverlay) {
+      authOverlay.hidden = false;
+    }
+  }
+
+  syncPublishButtonState();
+}
+
+function showAuthOverlay({ lock = false } = {}) {
+  if (lock) {
+    document.body.classList.add('auth-locked');
+  }
+  if (!authOverlay) return;
+  authOverlay.hidden = false;
+  window.requestAnimationFrame(() => {
+    if (authTokenInput) {
+      authTokenInput.focus();
+      authTokenInput.select();
+    }
+  });
+}
+
+function closeAuthOverlay({ resetStatus = true } = {}) {
+  if (authOverlay) {
+    authOverlay.hidden = true;
+  }
+  if (authTokenInput) {
+    authTokenInput.value = '';
+    authTokenInput.disabled = false;
+  }
+  if (resetStatus) {
+    setAuthStatus('');
+  }
+  setAuthLoading(false);
+}
+
+function getStoredAuth() {
+  try {
+    const raw = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    return {
+      token: parsed.token || null,
+      user: parsed.user || null
+    };
+  } catch (error) {
+    console.warn('Unable to read stored authentication', error);
+    return null;
+  }
+}
+
+function buildGitHubHeaders(tokenOverride) {
+  const headers = {
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+  const token = tokenOverride ?? githubAuth.token;
+  if (token) {
+    headers.Authorization = `token ${token}`;
+  }
+  return headers;
+}
+
+async function fetchGitHubUser(token) {
+  const response = await fetch('https://api.github.com/user', {
+    headers: buildGitHubHeaders(token)
+  });
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message = data?.message || 'Authentication failed. Please verify your token.';
+    const error = new Error(message);
+    error.data = data;
+    throw error;
+  }
+  return data;
+}
+
+async function initializeAuth() {
+  updateAuthUI();
+  const stored = getStoredAuth();
+  if (!stored?.token) {
+    setAuthStatus('Sign in with a GitHub personal access token to enable publishing.');
+    showAuthOverlay({ lock: true });
+    return;
+  }
+
+  githubAuth = {
+    token: stored.token,
+    user: stored.user || null
+  };
+  updateAuthUI();
+  setAuthStatus('Restoring previous session…');
+  setAuthLoading(true);
+
+  try {
+    const user = await fetchGitHubUser(stored.token);
+    persistAuth(stored.token, user);
+    setAuthStatus('Session restored.', 'success');
+    closeAuthOverlay({ resetStatus: false });
+    showToast(`Signed in as ${user.login}`);
+  } catch (error) {
+    console.error('Stored authentication is no longer valid', error);
+    githubAuth = { token: null, user: null };
+    clearStoredAuth();
+    updateAuthUI();
+    setAuthStatus('Session expired. Please sign in again.', 'error');
+    showAuthOverlay({ lock: true });
+  } finally {
+    setAuthLoading(false);
+    syncPublishButtonState();
+  }
+}
+
+async function githubRequest(path, { method = 'GET', body = undefined, headers = {} } = {}) {
+  if (!githubAuth.token) {
+    const error = new Error('Not authenticated');
+    error.code = 'NO_AUTH';
+    throw error;
+  }
+  const requestHeaders = {
+    ...buildGitHubHeaders(),
+    ...headers
+  };
+  if (body && !requestHeaders['Content-Type']) {
+    requestHeaders['Content-Type'] = 'application/json';
+  }
+
+  const response = await fetch(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}${path}`,
+    {
+      method,
+      headers: requestHeaders,
+      body
+    }
+  );
+
+  const text = await response.text();
+  let data = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch (error) {
+      data = text;
+    }
+  }
+
+  if (!response.ok) {
+    const message = typeof data === 'string' ? data : data?.message;
+    const error = new Error(message || `GitHub request failed (${response.status})`);
+    error.status = response.status;
+    error.data = data;
+    throw error;
+  }
+
+  return data;
+}
+
+function setPublishing(state) {
+  isPublishing = state;
+  syncPublishButtonState();
+}
+
+async function publishUpdates() {
+  if (!githubAuth.token) {
+    setAuthStatus('Sign in with a GitHub personal access token to publish updates.', 'error');
+    showAuthOverlay({ lock: true });
+    showToast('Authentication required to publish');
+    return;
+  }
+
+  setPublishing(true);
+  setAuthStatus('');
+
+  try {
+    const contentJson = JSON.stringify(collectContentData(), null, 2);
+    const projectsJson = JSON.stringify(collectProjectsData(), null, 2);
+
+    const ref = await githubRequest(`/git/ref/heads/${GITHUB_BRANCH}`);
+    const baseCommitSha = ref?.object?.sha;
+    if (!baseCommitSha) {
+      throw new Error('Unable to resolve repository head');
+    }
+
+    const commit = await githubRequest(`/git/commits/${baseCommitSha}`);
+    const baseTreeSha = commit?.tree?.sha;
+    if (!baseTreeSha) {
+      throw new Error('Unable to resolve repository tree');
+    }
+
+    const files = [
+      { path: 'content.json', content: contentJson },
+      { path: 'projects.json', content: projectsJson }
+    ];
+
+    const blobs = await Promise.all(
+      files.map(async (file) => {
+        const blob = await githubRequest('/git/blobs', {
+          method: 'POST',
+          body: JSON.stringify({ content: file.content, encoding: 'utf-8' })
+        });
+        return { ...file, blobSha: blob.sha };
+      })
+    );
+
+    const tree = await githubRequest('/git/trees', {
+      method: 'POST',
+      body: JSON.stringify({
+        base_tree: baseTreeSha,
+        tree: blobs.map((file) => ({
+          path: file.path,
+          mode: '100644',
+          type: 'blob',
+          sha: file.blobSha
+        }))
+      })
+    });
+
+    const committerName = githubAuth.user?.name || githubAuth.user?.login || 'portfolio-admin';
+    const committerEmail = githubAuth.user?.email
+      || (githubAuth.user?.login ? `${githubAuth.user.login}@users.noreply.github.com` : 'portfolio-admin@users.noreply.github.com');
+
+    const commitMessage = 'Update site content via admin panel';
+    const newCommit = await githubRequest('/git/commits', {
+      method: 'POST',
+      body: JSON.stringify({
+        message: commitMessage,
+        tree: tree.sha,
+        parents: [baseCommitSha],
+        author: { name: committerName, email: committerEmail },
+        committer: { name: committerName, email: committerEmail }
+      })
+    });
+
+    await githubRequest(`/git/refs/heads/${GITHUB_BRANCH}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ sha: newCommit.sha })
+    });
+
+    showToast('Content published to GitHub');
+  } catch (error) {
+    console.error('Publish failed', error);
+    const message = error?.data?.message || error.message || 'Publish failed';
+    showToast(message);
+    setAuthStatus(message, 'error');
+  } finally {
+    setPublishing(false);
+  }
+}
+
+async function handleAuthSubmit(event) {
+  event.preventDefault();
+  const token = authTokenInput?.value.trim();
+  if (!token) {
+    setAuthStatus('Please enter a personal access token.', 'error');
+    return;
+  }
+
+  setAuthLoading(true);
+  setAuthStatus('Verifying GitHub token…');
+
+  try {
+    const user = await fetchGitHubUser(token);
+    persistAuth(token, user);
+    setAuthStatus('Authentication successful.', 'success');
+    closeAuthOverlay();
+    showToast(`Signed in as ${user.login}`);
+  } catch (error) {
+    console.error('Authentication failed', error);
+    const message = error?.data?.message || error.message || 'Authentication failed. Please check your token.';
+    setAuthStatus(message, 'error');
+    setAuthLoading(false);
+  }
+}
 
 function isValidPage(page) {
   if (!page) return false;
@@ -559,6 +931,38 @@ async function init() {
   } catch (error) {
     console.error('Initialisation failed', error);
   }
+}
+
+initializeAuth();
+
+if (authForm) {
+  authForm.addEventListener('submit', handleAuthSubmit);
+}
+
+if (publishButton) {
+  publishButton.addEventListener('click', publishUpdates);
+}
+
+if (openAuthButton) {
+  openAuthButton.addEventListener('click', () => {
+    if (githubAuth.token) {
+      setAuthStatus('Enter a new token to switch accounts.');
+    } else if (!authStatusMessage?.textContent) {
+      setAuthStatus('Sign in with a GitHub personal access token to enable publishing.');
+    }
+    showAuthOverlay({ lock: !githubAuth.token });
+  });
+}
+
+if (signOutButton) {
+  signOutButton.addEventListener('click', () => {
+    clearStoredAuth();
+    githubAuth = { token: null, user: null };
+    updateAuthUI();
+    setAuthStatus('Signed out. Provide a token to continue.');
+    showAuthOverlay({ lock: true });
+    showToast('Signed out');
+  });
 }
 
 initNavigation();
