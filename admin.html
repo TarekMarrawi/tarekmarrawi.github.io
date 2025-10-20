@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio Content Admin</title>
+  <meta name="description" content="Admin panel to edit portfolio content and projects.">
+  <link rel="stylesheet" href="admin.css">
+  <link rel="preload" href="content.json" as="fetch" type="application/json" crossorigin="anonymous">
+  <link rel="preload" href="projects.json" as="fetch" type="application/json" crossorigin="anonymous">
+</head>
+<body>
+  <header class="admin-header">
+    <h1>Portfolio Admin Panel</h1>
+    <p>Update the site content and project listings interactively, then export refreshed JSON files.</p>
+  </header>
+  <main class="admin-main">
+    <section class="admin-section" aria-labelledby="content-heading">
+      <div class="section-header">
+        <h2 id="content-heading">Site content</h2>
+        <p>Edit the hero, about, skills, experience, and contact details.</p>
+      </div>
+      <form id="content-form" class="admin-form" novalidate>
+        <fieldset>
+          <legend>Hero</legend>
+          <label>
+            Kicker
+            <input type="text" name="hero-kicker" required>
+          </label>
+          <label>
+            Name
+            <input type="text" name="hero-name" required>
+          </label>
+          <label>
+            Subline
+            <textarea name="hero-subline" rows="2" required></textarea>
+          </label>
+          <div class="repeater" data-repeater="hero-actions">
+            <div class="repeater__header">
+              <h3>Actions</h3>
+              <button type="button" class="btn btn--ghost" data-action="add-hero-action">Add action</button>
+            </div>
+            <div class="repeater__list" id="hero-actions-list"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>About</legend>
+          <label>
+            Paragraphs
+            <textarea name="about-paragraphs" rows="6" placeholder="Separate paragraphs with a blank line."></textarea>
+          </label>
+          <div class="repeater" data-repeater="about-actions">
+            <div class="repeater__header">
+              <h3>Calls to action</h3>
+              <button type="button" class="btn btn--ghost" data-action="add-about-action">Add action</button>
+            </div>
+            <div class="repeater__list" id="about-actions-list"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Skills</legend>
+          <p class="hint">Each entry becomes a card with a title and bullet list.</p>
+          <div class="repeater" data-repeater="skills">
+            <div class="repeater__header">
+              <h3>Skill groups</h3>
+              <button type="button" class="btn btn--ghost" data-action="add-skill">Add skill group</button>
+            </div>
+            <div class="repeater__list" id="skills-list"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Experience</legend>
+          <label>
+            Section summary
+            <textarea name="experience-summary" rows="2"></textarea>
+          </label>
+          <div class="repeater" data-repeater="experience">
+            <div class="repeater__header">
+              <h3>Recent roles</h3>
+              <button type="button" class="btn btn--ghost" data-action="add-experience">Add role</button>
+            </div>
+            <div class="repeater__list" id="experience-list"></div>
+          </div>
+          <label>
+            Earlier experience label
+            <input type="text" name="experience-earlier-label">
+          </label>
+          <div class="repeater" data-repeater="earlier">
+            <div class="repeater__header">
+              <h3>Earlier highlights</h3>
+              <button type="button" class="btn btn--ghost" data-action="add-earlier">Add highlight</button>
+            </div>
+            <div class="repeater__list" id="earlier-list"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contact</legend>
+          <label>
+            Section title
+            <input type="text" name="contact-title">
+          </label>
+          <label>
+            Owner name
+            <input type="text" name="contact-owner">
+          </label>
+          <label>
+            Email
+            <input type="email" name="contact-email">
+          </label>
+          <label>
+            Location
+            <input type="text" name="contact-location">
+          </label>
+          <label>
+            Languages
+            <input type="text" name="contact-languages">
+          </label>
+          <label>
+            Footer note
+            <textarea name="contact-note" rows="2"></textarea>
+          </label>
+          <div class="repeater" data-repeater="contact-actions">
+            <div class="repeater__header">
+              <h3>Links</h3>
+              <button type="button" class="btn btn--ghost" data-action="add-contact-action">Add link</button>
+            </div>
+            <div class="repeater__list" id="contact-actions-list"></div>
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn--primary" id="download-content">Download content.json</button>
+          <button type="button" class="btn" id="copy-content">Copy JSON</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-section" aria-labelledby="projects-heading">
+      <div class="section-header">
+        <h2 id="projects-heading">Projects</h2>
+        <p>Manage the entries loaded from <code>projects.json</code>.</p>
+      </div>
+      <div class="section-toolbar">
+        <button type="button" class="btn btn--ghost" id="add-project">Add project</button>
+        <div class="toolbar-actions">
+          <button type="button" class="btn btn--primary" id="download-projects">Download projects.json</button>
+          <button type="button" class="btn" id="copy-projects">Copy JSON</button>
+        </div>
+      </div>
+      <div id="projects-list" class="projects-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <template id="action-item-template">
+    <div class="action-item">
+      <label>
+        Label
+        <input type="text" data-field="label">
+      </label>
+      <label>
+        URL
+        <input type="url" data-field="href" placeholder="https://example.com">
+      </label>
+      <label>
+        Variant
+        <select data-field="variant">
+          <option value="primary">Primary</option>
+          <option value="secondary">Secondary</option>
+          <option value="ghost">Ghost</option>
+        </select>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" data-field="newTab">
+        <span>Open in new tab</span>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" data-field="download">
+        <span>Download file</span>
+      </label>
+      <button type="button" class="btn btn--danger" data-action="remove-action">Remove</button>
+    </div>
+  </template>
+
+  <template id="skill-item-template">
+    <div class="skill-item">
+      <div class="skill-item__header">
+        <h4>Skill group</h4>
+        <div class="skill-item__actions">
+          <button type="button" class="btn btn--ghost" data-action="move-up">Move up</button>
+          <button type="button" class="btn btn--ghost" data-action="move-down">Move down</button>
+          <button type="button" class="btn btn--danger" data-action="remove-skill">Remove</button>
+        </div>
+      </div>
+      <label>
+        Title
+        <input type="text" data-field="title">
+      </label>
+      <label>
+        Items
+        <textarea data-field="items" rows="4" placeholder="One item per line"></textarea>
+      </label>
+    </div>
+  </template>
+
+  <template id="experience-item-template">
+    <div class="experience-item">
+      <div class="experience-item__header">
+        <h4>Role</h4>
+        <div class="experience-item__actions">
+          <button type="button" class="btn btn--ghost" data-action="move-up">Move up</button>
+          <button type="button" class="btn btn--ghost" data-action="move-down">Move down</button>
+          <button type="button" class="btn btn--danger" data-action="remove-experience">Remove</button>
+        </div>
+      </div>
+      <label>
+        Period
+        <input type="text" data-field="period" placeholder="MM/YYYY – MM/YYYY · City">
+      </label>
+      <label>
+        Role / Title
+        <input type="text" data-field="role">
+      </label>
+      <label>
+        Description
+        <textarea data-field="description" rows="3"></textarea>
+      </label>
+    </div>
+  </template>
+
+  <template id="earlier-item-template">
+    <div class="earlier-item">
+      <div class="earlier-item__header">
+        <h4>Highlight</h4>
+        <div class="earlier-item__actions">
+          <button type="button" class="btn btn--ghost" data-action="move-up">Move up</button>
+          <button type="button" class="btn btn--ghost" data-action="move-down">Move down</button>
+          <button type="button" class="btn btn--danger" data-action="remove-earlier">Remove</button>
+        </div>
+      </div>
+      <label>
+        Title (bold text)
+        <input type="text" data-field="title">
+      </label>
+      <label>
+        Description (supports simple HTML such as <code>&lt;em&gt;</code>)
+        <textarea data-field="description" rows="3"></textarea>
+      </label>
+    </div>
+  </template>
+
+  <template id="project-editor-template">
+    <details class="project-editor" open>
+      <summary class="project-editor__summary">
+        <span class="project-editor__title">New project</span>
+        <div class="project-editor__summary-actions">
+          <button type="button" class="btn btn--ghost" data-action="move-up">Move up</button>
+          <button type="button" class="btn btn--ghost" data-action="move-down">Move down</button>
+          <button type="button" class="btn btn--danger" data-action="remove-project">Remove</button>
+        </div>
+      </summary>
+      <div class="project-editor__body">
+        <label>
+          ID
+          <input type="text" data-field="id" placeholder="slug-name">
+        </label>
+        <label>
+          Title
+          <input type="text" data-field="title">
+        </label>
+        <label>
+          Summary
+          <textarea data-field="summary" rows="2"></textarea>
+        </label>
+        <label>
+          Description
+          <textarea data-field="description" rows="3"></textarea>
+        </label>
+        <label>
+          Impact
+          <textarea data-field="impact" rows="2"></textarea>
+        </label>
+        <label>
+          Tech (one per line)
+          <textarea data-field="tech" rows="3"></textarea>
+        </label>
+        <label>
+          Tags (one per line)
+          <textarea data-field="tags" rows="2"></textarea>
+        </label>
+        <label>
+          Image URL (data URI or link)
+          <input type="text" data-field="image">
+        </label>
+        <div class="grid">
+          <label>
+            Image width
+            <input type="number" data-field="imageWidth" min="0">
+          </label>
+          <label>
+            Image height
+            <input type="number" data-field="imageHeight" min="0">
+          </label>
+        </div>
+        <label>
+          Status (optional)
+          <input type="text" data-field="status" placeholder="coming-soon">
+        </label>
+        <fieldset class="project-editor__links">
+          <legend>Links</legend>
+          <label>
+            Demo URL
+            <input type="url" data-field="link-demo">
+          </label>
+          <label>
+            Code URL
+            <input type="url" data-field="link-code">
+          </label>
+          <label>
+            Write-up URL
+            <input type="url" data-field="link-writeup">
+          </label>
+          <label>
+            Primary link URL
+            <input type="url" data-field="primary-href">
+          </label>
+          <label>
+            Primary link label
+            <input type="text" data-field="primary-label">
+          </label>
+        </fieldset>
+      </div>
+    </details>
+  </template>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

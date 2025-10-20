@@ -10,6 +10,7 @@ Open `index.html` in any modern browser or serve the repository with a simple st
 - **Accessible navigation** with skip link, sticky section nav highlighting, keyboard focus styles, and high-contrast themes.
 - **Automatic light/dark theme** toggle with `localStorage` persistence and system-preference detection.
 - **Projects powered by JSON** (`projects.json`) fetched at runtime with tag-based filters (LLM, ASR, TTS, NLP, Edge, Healthcare, Simulation).
+- **In-browser admin panel** (`admin.html`) to edit portfolio content and projects, then export updated JSON files.
 - **Semantically rich content**: hero, skills, projects, experience timeline, and contact footer CTAs.
 - **Performance conscious**: system-font stack, reusable CSS variables, and minimal JavaScript.
 - **SEO ready**: metadata, Open Graph tags, JSON-LD schema, and favicon placeholder.
@@ -22,9 +23,9 @@ Open `index.html` in any modern browser or serve the repository with a simple st
 > **Note:** Browsers may block `fetch()` from reading local JSON files when opened via the `file://` protocol. Serving the folder via a local server mirrors GitHub Pages behavior.
 
 ## Customization
-- **Update profile details:** Edit `index.html` to change hero text, about copy, skills, experience, and contact information.
+- **Update profile details:** Edit `content.json` (or use `admin.html`) to change hero text, about copy, skills, experience, and contact information.
 - **Modify styling:** Adjust theme colors, typography, or layout tokens in `styles.css`. The design system uses CSS variables at the top of the file.
-- **Projects data:** Add, remove, or edit project entries in `projects.json`. Each entry follows this schema:
+- **Projects data:** Add, remove, or edit project entries in `projects.json` (also editable via `admin.html`). Each entry follows this schema:
 
   ```json
   {
@@ -50,6 +51,12 @@ Open `index.html` in any modern browser or serve the repository with a simple st
 
 - **Placeholder imagery:** Update `/assets/placeholder-project.svg` with your own artwork or replace it with multiple files named `placeholder-*.svg`. Ensure the new paths are referenced in `projects.json` or within the HTML template.
 - **Theme accent color:** Change `--color-accent` and `--color-accent-strong` in `styles.css` to adapt the branding.
+
+### Using the admin panel
+
+1. Serve the repository locally (or open it on GitHub Pages) and navigate to `/admin.html`.
+2. The form loads `content.json` and `projects.json`. Adjust fields, add/remove sections, and reorder entries.
+3. Use the **Download** buttons to save fresh JSON files or **Copy JSON** to place the updated payload on your clipboard before committing.
 
 ## Adding Your CV
 Place your PDF résumé in the project root (e.g., `Tarek_Marrawi_Senior_AI_Engineer_CV.pdf`). Update the `href` attribute on the “Download CV” buttons in `index.html` if the filename changes.

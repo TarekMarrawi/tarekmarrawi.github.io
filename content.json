@@ -1,0 +1,168 @@
+{
+  "hero": {
+    "kicker": "Senior AI Engineer — LLMs, Speech (ASR/TTS), Edge Inference",
+    "name": "Tarek Marrawi",
+    "subline": "I build production AI: ASR → LLM summarization, multilingual TTS, and edge deployment.",
+    "actions": [
+      {
+        "label": "Download CV",
+        "href": "./Tarek_Marrawi_Senior_AI_Engineer_CV.pdf",
+        "variant": "primary",
+        "download": true,
+        "newTab": false
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/your-username",
+        "variant": "secondary",
+        "newTab": true
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/in/tarek-marrawi",
+        "variant": "ghost",
+        "newTab": true
+      }
+    ]
+  },
+  "about": {
+    "paragraphs": [
+      "Senior AI Engineer and Technology Consultant with 13+ years delivering AI systems, speech/NLP solutions, and real-time simulation platforms across healthcare, industrial, and entertainment domains. Former CTO at Blockville, leading AI and 3D teams to build scalable automation pipelines.",
+      "I design, train, and deploy end-to-end AI: ASR, LLMs, TTS; on-device inference; cloud orchestration. I bridge product strategy with hands-on engineering to deliver measurable impact (automation, latency, cost)."
+    ],
+    "actions": [
+      {
+        "label": "Download CV",
+        "href": "./Tarek_Marrawi_Senior_AI_Engineer_CV.pdf",
+        "variant": "primary",
+        "download": true,
+        "newTab": false
+      },
+      {
+        "label": "Portfolio (GitHub)",
+        "href": "https://github.com/your-username",
+        "variant": "secondary",
+        "newTab": true
+      }
+    ]
+  },
+  "skills": [
+    {
+      "title": "LLMs & Language Systems",
+      "items": [
+        "Prompt Engineering",
+        "RAG",
+        "Context Management",
+        "Multi-Agent Systems",
+        "Fine-Tuning",
+        "Evaluation",
+        "Summarization",
+        "Dialogue Safety",
+        "Knowledge Extraction",
+        "Semantic Search"
+      ]
+    },
+    {
+      "title": "Speech & NLP",
+      "items": [
+        "ASR (Whisper)",
+        "Multilingual NLP",
+        "Arabic Speech Alignment",
+        "Phoneme Modeling",
+        "TTS Optimization",
+        "Sentiment/Intent"
+      ]
+    },
+    {
+      "title": "Healthcare Data & Safety",
+      "items": [
+        "Medical/Speech Dataset Curation",
+        "PII Redaction",
+        "QA & Governance",
+        "MRI/NIfTI Preprocessing"
+      ]
+    },
+    {
+      "title": "Infrastructure & Edge",
+      "items": [
+        "On-Device Inference",
+        "Quantization",
+        "ONNX/ORT",
+        "FastAPI",
+        "Python",
+        "TypeScript",
+        "Docker",
+        "CI/CD",
+        "Cloud (AWS/GCP)",
+        "Event Streaming Systems"
+      ]
+    },
+    {
+      "title": "Product & Leadership",
+      "items": [
+        "Agile Delivery",
+        "AI Strategy",
+        "Roadmapping",
+        "Cross-Functional Collaboration",
+        "Mentorship"
+      ]
+    }
+  ],
+  "experience": {
+    "summary": "Condensed highlights from over a decade of building production AI and immersive systems.",
+    "entries": [
+      {
+        "period": "07/2024 – Present · Istanbul",
+        "role": "AI & Simulation Technology Consultant — Self-Employed",
+        "description": "Implemented AI pipelines for generative media and healthcare data processing, automating >60% of manual workflows; engineered on-device LLM/TTS inference (mobile/WebGL) with >90% cost reduction; built multilingual speech/phoneme systems (Arabic-centric tuning)."
+      },
+      {
+        "period": "07/2022 – 06/2024 · Istanbul",
+        "role": "CTO — Blockville Digital Assets (Doğan Yatırım)",
+        "description": "Architected real-time LLM/TTS stacks for on-device use (quantization + caching); developed multi-agent coordination for AI personas; automated 3D content pipelines (>70% faster)."
+      },
+      {
+        "period": "01/2022 – 05/2022 · Gebze",
+        "role": "Digital Twin Division Manager — UnoPro",
+        "description": "Delivered industrial digital twins (training/planning); modular simulation components; AI-assisted automation for camera pathing/segmentation."
+      }
+    ],
+    "earlierLabel": "Earlier experience",
+    "earlier": [
+      {
+        "title": "Sait Grup — Co-Founder / Sr. Software Engineer (2018–2021):",
+        "description": "Automation + early AI prototypes; led <em>MyTalep</em> (on-demand commerce platform)."
+      },
+      {
+        "title": "Brainia Studio (Google Partner) — Software Engineer (2013–2018):",
+        "description": "Unity/WebGL titles with native Android/iOS integrations and telemetry."
+      },
+      {
+        "title": "Bayan — Software Engineer (Android) (2012–2013):",
+        "description": "High-performance Android apps with clean architecture."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Let's collaborate",
+    "owner": "Tarek Marrawi",
+    "email": "tarek.marrawi@hotmail.com",
+    "location": "Istanbul, Türkiye",
+    "languages": "Arabic (Native) · English (C1) · Turkish (B1)",
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/your-username",
+        "variant": "secondary",
+        "newTab": true
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/in/tarek-marrawi",
+        "variant": "ghost",
+        "newTab": true
+      }
+    ],
+    "note": "Portfolio site crafted with accessibility, performance, and AI precision."
+  }
+}
