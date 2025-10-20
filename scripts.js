@@ -316,15 +316,31 @@
     return li;
   }
 
+  function formatStatusLabel(value) {
+    if (!value || typeof value !== 'string') return '';
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    if (trimmed.toLowerCase() === 'coming-soon') return 'Coming soon';
+    return trimmed
+      .split(/[-_\s]+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
   function normaliseLink(value, fallbackLabel = 'View project') {
     if (typeof value === 'string') {
       const href = value.trim();
-      if (!href || href === '#' || href === 'coming-soon') return null;
+      if (!href) return null;
+      const lowered = href.toLowerCase();
+      if (href === '#' || lowered === 'coming-soon') return null;
       return { href, label: fallbackLabel };
     }
     if (value && typeof value === 'object') {
       const href = typeof value.href === 'string' ? value.href.trim() : '';
-      if (!href || href === '#' || href === 'coming-soon') return null;
+      if (!href) return null;
+      const lowered = href.toLowerCase();
+      if (href === '#' || lowered === 'coming-soon') return null;
       const label =
         typeof value.label === 'string' && value.label.trim()
           ? value.label.trim()
@@ -382,24 +398,20 @@
     (project.tech || []).forEach((item) => techList.appendChild(createTechBadge(item)));
 
     const cardLink = card;
-    const primaryLink = project.primaryLink || null;
-    const linkLabel = primaryLink?.label || 'View project';
+    const projectId = typeof project.id === 'string' ? project.id.trim() : '';
+    const detailLabel = project.title ? `View details — ${project.title}` : 'View project details';
 
-    if (primaryLink?.href) {
-      cardLink.href = primaryLink.href;
-      cardLink.target = '_blank';
-      cardLink.rel = 'noopener';
+    if (projectId) {
+      const detailUrl = `project.html?id=${encodeURIComponent(projectId)}`;
+      cardLink.href = detailUrl;
+      cardLink.removeAttribute('target');
+      cardLink.removeAttribute('rel');
       cardLink.classList.remove('project-card--disabled');
       cardLink.removeAttribute('aria-disabled');
-      cardLink.setAttribute('aria-label', `${linkLabel} — ${project.title || 'Project'}`);
+      cardLink.setAttribute('aria-label', detailLabel);
       cardLink.tabIndex = 0;
-      cardLink.title = `${project.title || 'Project'} — ${linkLabel}`;
-      if (project.status === 'coming-soon') {
-        status.textContent = 'Coming soon';
-      } else {
-        status.textContent = '';
-      }
-      status.hidden = project.status === 'coming-soon' ? false : true;
+      cardLink.title = detailLabel;
+      card.dataset.projectId = projectId;
     } else {
       cardLink.removeAttribute('href');
       cardLink.removeAttribute('target');
@@ -409,12 +421,19 @@
       cardLink.removeAttribute('aria-label');
       cardLink.removeAttribute('title');
       cardLink.tabIndex = -1;
-      if (project.status === 'coming-soon') {
-        status.textContent = 'Coming soon';
-      } else {
-        status.textContent = 'Link coming soon';
-      }
+      delete card.dataset.projectId;
+    }
+
+    const statusLabel = formatStatusLabel(project.status);
+    if (statusLabel) {
+      status.textContent = statusLabel;
       status.hidden = false;
+    } else if (!projectId) {
+      status.textContent = 'Details coming soon';
+      status.hidden = false;
+    } else {
+      status.textContent = '';
+      status.hidden = true;
     }
 
     card.dataset.tags = (project.tags || []).join(',');
@@ -557,6 +576,7 @@
     return raw
       .map((item) => ({
         ...item,
+        id: typeof item.id === 'string' ? item.id.trim() : '',
         tags: Array.isArray(item.tags) ? item.tags : [],
         tech: Array.isArray(item.tech) ? item.tech : [],
         links: typeof item.links === 'object' && item.links !== null ? item.links : {},

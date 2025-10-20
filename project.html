@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project details — Tarek Marrawi Portfolio</title>
+  <meta name="description" content="Explore detailed information about projects from Tarek Marrawi's portfolio, including impact, tech stack, and live links.">
+  <meta name="theme-color" content="#4DA3FF">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%234DA3FF'/%3E%3Cpath d='M9 9h14v14H9z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3Cpath d='M12 21l4-10 4 10' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preload" href="projects.json" as="fetch" type="application/json" crossorigin="anonymous">
+  <link rel="preload" href="content.json" as="fetch" type="application/json" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="project-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header site-header--project" id="top">
+    <div class="top-bar">
+      <a class="brand" href="index.html" aria-label="Back to the home page">
+        <span class="brand-mark" aria-hidden="true">TM</span>
+        <span class="brand-name" id="brand-name">Tarek Marrawi</span>
+      </a>
+      <nav class="project-top-nav" aria-label="Project navigation">
+        <a class="btn btn--ghost" href="index.html#projects">← All projects</a>
+      </nav>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <span class="theme-toggle__icon" aria-hidden="true"></span>
+        <span class="theme-toggle__text">Toggle theme</span>
+      </button>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <article class="project-detail" id="project-detail" data-state="loading">
+      <div class="project-detail__status" id="project-status" role="status" aria-live="polite">Loading project…</div>
+      <div class="project-detail__content" id="project-content" hidden>
+        <header class="project-detail__header">
+          <p class="project-detail__tags project-card__tags" id="project-tags"></p>
+          <h1 id="project-title">Project</h1>
+          <p class="project-detail__summary" id="project-summary"></p>
+          <div class="project-detail__meta">
+            <span class="project-detail__badge" id="project-status-badge" hidden></span>
+          </div>
+          <div class="project-detail__actions" id="project-actions" hidden></div>
+        </header>
+        <figure class="project-detail__media" id="project-media" hidden>
+          <img id="project-image" alt="">
+        </figure>
+        <section class="project-detail__section" id="project-description-section" hidden>
+          <h2>Description</h2>
+          <p id="project-description"></p>
+        </section>
+        <section class="project-detail__section project-detail__section--impact" id="project-impact-section" hidden>
+          <h2>Impact</h2>
+          <p id="project-impact"></p>
+        </section>
+        <section class="project-detail__section" id="project-tech-section" hidden>
+          <h2>Tech stack</h2>
+          <ul class="project-card__tech project-detail__tech" id="project-tech"></ul>
+        </section>
+        <section class="project-detail__section" id="project-links-section" hidden>
+          <h2>Links</h2>
+          <ul class="project-detail__links" id="project-links"></ul>
+        </section>
+      </div>
+    </article>
+  </main>
+  <footer class="project-footer">
+    <a class="btn btn--ghost" href="index.html#projects">Back to all projects</a>
+  </footer>
+  <script src="project.js" defer></script>
+</body>
+</html>
