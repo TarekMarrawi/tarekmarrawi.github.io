@@ -21,6 +21,81 @@ const addProjectBtn = document.getElementById('add-project');
 const downloadProjectsBtn = document.getElementById('download-projects');
 const copyProjectsBtn = document.getElementById('copy-projects');
 const toastEl = document.getElementById('toast');
+const pageButtons = Array.from(document.querySelectorAll('[data-page-target]'));
+const pageSections = Array.from(document.querySelectorAll('[data-page]'));
+let activePage = null;
+
+function isValidPage(page) {
+  if (!page) return false;
+  return pageSections.some((section) => section.dataset.page === page);
+}
+
+function activatePage(page, { updateHash = true, scroll = true } = {}) {
+  if (!isValidPage(page)) return;
+  if (activePage === page) return;
+
+  const targetSection = pageSections.find((section) => section.dataset.page === page);
+  if (!targetSection) return;
+
+  activePage = page;
+
+  pageSections.forEach((section) => {
+    const isCurrent = section === targetSection;
+    section.classList.toggle('is-active', isCurrent);
+    section.toggleAttribute('hidden', !isCurrent);
+  });
+
+  pageButtons.forEach((button) => {
+    const isCurrent = button.dataset.pageTarget === page;
+    button.classList.toggle('is-active', isCurrent);
+    if (isCurrent) {
+      button.setAttribute('aria-current', 'page');
+    } else {
+      button.removeAttribute('aria-current');
+    }
+  });
+
+  if (updateHash) {
+    const url = new URL(window.location.href);
+    url.hash = page;
+    history.replaceState(null, '', url);
+  }
+
+  if (scroll) {
+    window.requestAnimationFrame(() => {
+      targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}
+
+function initNavigation() {
+  if (!pageSections.length) return;
+
+  pageButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const target = button.dataset.pageTarget;
+      if (target) {
+        activatePage(target);
+      }
+    });
+  });
+
+  window.addEventListener('hashchange', () => {
+    const target = window.location.hash.slice(1);
+    if (isValidPage(target)) {
+      activatePage(target, { updateHash: false });
+    }
+  });
+
+  const initialHash = window.location.hash.slice(1);
+  const initialPage = isValidPage(initialHash)
+    ? initialHash
+    : pageSections[0]?.dataset.page;
+
+  if (initialPage) {
+    activatePage(initialPage, { updateHash: false, scroll: false });
+  }
+}
 
 function cloneTemplate(template) {
   if (!template) return null;
@@ -485,6 +560,8 @@ async function init() {
     console.error('Initialisation failed', error);
   }
 }
+
+initNavigation();
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);

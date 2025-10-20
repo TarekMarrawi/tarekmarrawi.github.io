@@ -26,6 +26,17 @@ body {
   line-height: 1.6;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 code {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   padding: 0.1rem 0.35rem;
@@ -53,11 +64,91 @@ h1,
   margin-top: 0.5rem;
 }
 
-.admin-main {
-  max-width: 1100px;
+.admin-layout {
+  max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  gap: 2.5rem;
+  gap: 2rem;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.admin-nav {
+  position: sticky;
+  top: 1.5rem;
+  display: grid;
+  gap: 2rem;
+  align-self: start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.admin-nav__title {
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.admin-nav__heading {
+  font-size: 1rem;
+  margin: 0 0 0.75rem;
+  color: var(--text-muted);
+}
+
+.admin-nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.admin-nav__link {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-nav__link:hover,
+.admin-nav__link:focus-visible {
+  border-color: var(--border-strong);
+  background: rgba(37, 99, 235, 0.08);
+  outline: none;
+}
+
+.admin-nav__link.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent-strong);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+}
+
+.admin-main {
+  display: grid;
+  gap: 2rem;
+}
+
+.admin-pages {
+  display: grid;
+  gap: 2rem;
+}
+
+.admin-section[hidden] {
+  display: none;
 }
 
 .admin-section {
@@ -92,11 +183,6 @@ h1,
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-}
-
-.admin-form {
-  display: grid;
-  gap: 1.75rem;
 }
 
 fieldset {
@@ -225,8 +311,7 @@ textarea {
 .form-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: flex-end;
+  gap: 1rem;
 }
 
 .btn {
@@ -362,6 +447,45 @@ textarea {
 .toast.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (max-width: 960px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .admin-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .admin-nav__link {
+    flex: 1 1 160px;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-nav {
+    padding: 1.25rem;
+  }
+
+  .admin-nav__list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .admin-nav__link {
+    flex: 0 0 auto;
+  }
 }
 
 @media (max-width: 768px) {
