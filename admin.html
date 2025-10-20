@@ -28,6 +28,7 @@
         <h3 id="nav-content-heading" class="admin-nav__heading">Site content</h3>
         <ul class="admin-nav__list">
           <li><button type="button" class="admin-nav__link is-active" data-page-target="hero">Hero</button></li>
+          <li><button type="button" class="admin-nav__link" data-page-target="banner">Site banner</button></li>
           <li><button type="button" class="admin-nav__link" data-page-target="about">About</button></li>
           <li><button type="button" class="admin-nav__link" data-page-target="skills">Skills</button></li>
           <li><button type="button" class="admin-nav__link" data-page-target="experience">Experience</button></li>
@@ -71,6 +72,24 @@
               </div>
               <div class="repeater__list" id="hero-actions-list"></div>
             </div>
+          </fieldset>
+        </section>
+
+        <section class="admin-section" aria-labelledby="banner-heading" data-page="banner" hidden>
+          <div class="section-header">
+            <h2 id="banner-heading">Site banner</h2>
+            <p>Control the warning notice shown at the top of the live site.</p>
+          </div>
+          <fieldset aria-labelledby="banner-heading" id="content-banner">
+            <legend class="visually-hidden">Site banner content</legend>
+            <label class="checkbox">
+              <input type="checkbox" name="banner-enabled">
+              Display banner
+            </label>
+            <label>
+              Banner message
+              <textarea name="banner-message" rows="2" placeholder="This portfolio is under construction and not all information is available yet."></textarea>
+            </label>
           </fieldset>
         </section>
 

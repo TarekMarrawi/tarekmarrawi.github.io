@@ -21,6 +21,8 @@
   const aboutContentEl = document.getElementById('about-content');
   const aboutActionsEl = document.getElementById('about-actions');
   const skillsGrid = document.getElementById('skills-grid');
+  const bannerEl = document.getElementById('site-banner');
+  const bannerMessageEl = document.getElementById('site-banner-message');
   const experienceSummaryEl = document.getElementById('experience-summary');
   const experienceListEl = document.getElementById('experience-list');
   const experienceMoreEl = document.getElementById('experience-more');
@@ -39,6 +41,7 @@
   const CACHE_KEY = 'projects:v1';
   const CACHE_VERSION = 'v1';
   const PLACEHOLDER_IMAGE = 'data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/';
+  const BANNER_VARIANTS = ['info', 'success', 'warning', 'danger'];
   const requestIdle = window.requestIdleCallback || function (cb) {
     return window.setTimeout(() => {
       cb({ didTimeout: true, timeRemaining: () => 0 });
@@ -141,6 +144,25 @@
     const fragment = document.createDocumentFragment();
     actions.forEach((action) => fragment.appendChild(createActionButton(action)));
     container.appendChild(fragment);
+  }
+
+  function updateSiteBanner(banner = {}) {
+    if (!bannerEl || !bannerMessageEl) return;
+    const message = typeof banner.message === 'string' ? banner.message.trim() : '';
+    const enabled = Boolean(banner.enabled);
+    const variant = typeof banner.variant === 'string' ? banner.variant.trim().toLowerCase() : '';
+    const appliedVariant = BANNER_VARIANTS.includes(variant) ? variant : 'warning';
+    BANNER_VARIANTS.forEach((value) => {
+      bannerEl.classList.remove(`site-banner--${value}`);
+    });
+    bannerEl.classList.add(`site-banner--${appliedVariant}`);
+    if (enabled && message) {
+      bannerMessageEl.textContent = message;
+      bannerEl.hidden = false;
+    } else {
+      bannerMessageEl.textContent = message || '';
+      bannerEl.hidden = true;
+    }
   }
 
   function updateHeroContent(hero = {}) {
@@ -291,6 +313,7 @@
 
   function applyContent(content) {
     if (!content || typeof content !== 'object') return;
+    updateSiteBanner(content.banner || {});
     updateHeroContent(content.hero || {});
     updateAboutContent(content.about || {});
     updateSkillsContent(content.skills || []);
