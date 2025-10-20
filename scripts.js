@@ -13,6 +13,26 @@
   const currentYearEl = document.getElementById('current-year');
   const filterButtons = document.querySelectorAll('.filter-btn');
   const sections = Array.from(document.querySelectorAll('main section, footer#contact'));
+  const brandNameEl = document.getElementById('brand-name');
+  const heroNameEl = document.getElementById('hero-name');
+  const heroKickerEl = document.getElementById('hero-kicker');
+  const heroSublineEl = document.getElementById('hero-subline');
+  const heroActionsEl = document.getElementById('hero-actions');
+  const aboutContentEl = document.getElementById('about-content');
+  const aboutActionsEl = document.getElementById('about-actions');
+  const skillsGrid = document.getElementById('skills-grid');
+  const experienceSummaryEl = document.getElementById('experience-summary');
+  const experienceListEl = document.getElementById('experience-list');
+  const experienceMoreEl = document.getElementById('experience-more');
+  const experienceEarlierLabelEl = document.getElementById('experience-earlier-label');
+  const experienceEarlierEl = document.getElementById('experience-earlier');
+  const contactTitleEl = document.getElementById('contact-title');
+  const contactEmailEl = document.getElementById('contact-email');
+  const contactEmailLinkEl = document.getElementById('contact-email-link');
+  const contactLocationEl = document.getElementById('contact-location');
+  const contactLanguagesEl = document.getElementById('contact-languages');
+  const contactLinksEl = document.getElementById('contact-links');
+  const footerNoteEl = document.getElementById('footer-note');
 
   const THEME_KEY = 'tarekmarrawi-theme';
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -67,6 +87,227 @@
   function toggleTheme() {
     const current = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     setTheme(current);
+  }
+
+  function escapeHTML(value) {
+    if (typeof value !== 'string') return '';
+    return value.replace(/[&<>"']/g, (char) => {
+      switch (char) {
+        case '&':
+          return '&amp;';
+        case '<':
+          return '&lt;';
+        case '>':
+          return '&gt;';
+        case '"':
+          return '&quot;';
+        case "'":
+          return '&#39;';
+        default:
+          return char;
+      }
+    });
+  }
+
+  function createActionButton(action) {
+    const button = document.createElement('a');
+    const variant = typeof action?.variant === 'string' && action.variant.trim() ? action.variant.trim() : 'secondary';
+    button.className = `btn btn--${variant}`;
+    button.textContent = action?.label || 'Learn more';
+    const href = typeof action?.href === 'string' && action.href.trim() ? action.href.trim() : '#';
+    button.href = href;
+    const openInNewTab = Boolean(action?.newTab);
+    if (openInNewTab) {
+      button.target = '_blank';
+      button.rel = 'noopener';
+    } else {
+      button.removeAttribute('target');
+      button.removeAttribute('rel');
+    }
+    if (action?.download) {
+      if (typeof action.download === 'string') {
+        button.setAttribute('download', action.download);
+      } else {
+        button.setAttribute('download', '');
+      }
+    }
+    return button;
+  }
+
+  function applyActions(container, actions) {
+    if (!container) return;
+    container.replaceChildren();
+    if (!Array.isArray(actions) || !actions.length) return;
+    const fragment = document.createDocumentFragment();
+    actions.forEach((action) => fragment.appendChild(createActionButton(action)));
+    container.appendChild(fragment);
+  }
+
+  function updateHeroContent(hero = {}) {
+    if (heroKickerEl && hero.kicker) heroKickerEl.textContent = hero.kicker;
+    if (heroNameEl && hero.name) heroNameEl.textContent = hero.name;
+    if (brandNameEl && hero.name) brandNameEl.textContent = hero.name;
+    if (heroSublineEl && hero.subline) heroSublineEl.textContent = hero.subline;
+    applyActions(heroActionsEl, hero.actions);
+  }
+
+  function updateAboutContent(about = {}) {
+    if (aboutContentEl) {
+      aboutContentEl.replaceChildren();
+      if (Array.isArray(about.paragraphs)) {
+        const fragment = document.createDocumentFragment();
+        about.paragraphs.forEach((paragraph) => {
+          if (!paragraph) return;
+          const p = document.createElement('p');
+          p.textContent = paragraph;
+          fragment.appendChild(p);
+        });
+        aboutContentEl.appendChild(fragment);
+      }
+    }
+    applyActions(aboutActionsEl, about.actions);
+  }
+
+  function createSkillGroup(group) {
+    const article = document.createElement('article');
+    article.className = 'skill-group';
+    if (group?.title) {
+      const heading = document.createElement('h3');
+      heading.textContent = group.title;
+      article.appendChild(heading);
+    }
+    const list = document.createElement('ul');
+    if (Array.isArray(group?.items)) {
+      group.items.forEach((item) => {
+        if (!item) return;
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+    article.appendChild(list);
+    return article;
+  }
+
+  function updateSkillsContent(skills) {
+    if (!skillsGrid) return;
+    if (Array.isArray(skills)) {
+      if (!skills.length) {
+        skillsGrid.replaceChildren();
+        return;
+      }
+      const fragment = document.createDocumentFragment();
+      skills.forEach((group) => fragment.appendChild(createSkillGroup(group)));
+      skillsGrid.replaceChildren(fragment);
+    }
+  }
+
+  function createExperienceItem(entry) {
+    const item = document.createElement('li');
+    item.className = 'timeline__item';
+    if (entry?.period) {
+      const period = document.createElement('div');
+      period.className = 'timeline__period';
+      period.textContent = entry.period;
+      item.appendChild(period);
+    }
+    if (entry?.role) {
+      const role = document.createElement('h3');
+      role.textContent = entry.role;
+      item.appendChild(role);
+    }
+    if (entry?.description) {
+      const description = document.createElement('p');
+      description.textContent = entry.description;
+      item.appendChild(description);
+    }
+    return item;
+  }
+
+  function updateExperienceContent(experience = {}) {
+    if (experienceSummaryEl && experience.summary) {
+      experienceSummaryEl.textContent = experience.summary;
+    }
+    if (experienceListEl && Array.isArray(experience.entries)) {
+      if (!experience.entries.length) {
+        experienceListEl.replaceChildren();
+      } else {
+        const fragment = document.createDocumentFragment();
+        experience.entries.forEach((entry) => fragment.appendChild(createExperienceItem(entry)));
+        experienceListEl.replaceChildren(fragment);
+      }
+    }
+    if (experienceMoreEl && experienceEarlierEl) {
+      const hasEarlier = Array.isArray(experience.earlier) && experience.earlier.length;
+      experienceMoreEl.hidden = !hasEarlier;
+      if (hasEarlier) {
+        if (experienceEarlierLabelEl) {
+          const label = typeof experience.earlierLabel === 'string' ? experience.earlierLabel : 'Earlier experience';
+          experienceEarlierLabelEl.textContent = label;
+        }
+        experienceEarlierEl.replaceChildren();
+        const fragment = document.createDocumentFragment();
+        experience.earlier.forEach((entry) => {
+          if (!entry) return;
+          const p = document.createElement('p');
+          const title = escapeHTML(entry.title || '');
+          const description = typeof entry.description === 'string' ? entry.description : '';
+          p.innerHTML = `<strong>${title}</strong> ${description}`.trim();
+          fragment.appendChild(p);
+        });
+        experienceEarlierEl.appendChild(fragment);
+      }
+    }
+  }
+
+  function updateContactContent(contact = {}, hero = {}) {
+    if (contactTitleEl && contact.title) contactTitleEl.textContent = contact.title;
+    if (contactEmailLinkEl && contact.email) {
+      contactEmailLinkEl.textContent = contact.email;
+      contactEmailLinkEl.href = `mailto:${contact.email}`;
+    }
+    if (contactEmailEl && contact.email) {
+      contactEmailEl.firstChild?.nodeType === Node.TEXT_NODE && (contactEmailEl.firstChild.textContent = 'Email: ');
+    }
+    if (contactLocationEl && contact.location) {
+      contactLocationEl.textContent = `Location: ${contact.location}`;
+    }
+    if (contactLanguagesEl && contact.languages) {
+      contactLanguagesEl.textContent = `Languages: ${contact.languages}`;
+    }
+    applyActions(contactLinksEl, contact.links);
+    if (footerNoteEl) {
+      const owner = contact.owner || hero.name || 'Tarek Marrawi';
+      const note = contact.note || 'Portfolio site crafted with accessibility, performance, and AI precision.';
+      const trailing = ` ${owner}. ${note}`;
+      const trailingNode = footerNoteEl.childNodes[2];
+      if (trailingNode && trailingNode.nodeType === Node.TEXT_NODE) {
+        trailingNode.textContent = trailing;
+      } else {
+        footerNoteEl.append(trailing);
+      }
+    }
+  }
+
+  function applyContent(content) {
+    if (!content || typeof content !== 'object') return;
+    updateHeroContent(content.hero || {});
+    updateAboutContent(content.about || {});
+    updateSkillsContent(content.skills || []);
+    updateExperienceContent(content.experience || {});
+    updateContactContent(content.contact || {}, content.hero || {});
+  }
+
+  function fetchContent() {
+    fetch('content.json', { cache: 'no-cache' })
+      .then((response) => {
+        if (!response.ok) throw new Error('Unable to load content');
+        return response.json();
+      })
+      .then(applyContent)
+      .catch((error) => {
+        console.warn('Unable to fetch site content', error);
+      });
   }
 
   function createTechBadge(text) {
@@ -454,6 +695,7 @@
     initSmoothNav(sectionNav);
     initObserver();
     initFilters();
+    fetchContent();
 
     if (bootProjects.length) {
       hydrateProjects(normaliseProjects(bootProjects));

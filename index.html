@@ -41,7 +41,7 @@
     <div class="top-bar">
       <a class="brand" href="#top" aria-label="Tarek Marrawi home">
         <span class="brand-mark" aria-hidden="true">TM</span>
-        <span class="brand-name">Tarek Marrawi</span>
+        <span class="brand-name" id="brand-name">Tarek Marrawi</span>
       </a>
       <nav class="primary-nav" aria-label="Primary">
         <ul>
@@ -59,10 +59,10 @@
     </div>
     <div class="hero" role="presentation">
       <div class="hero__text">
-        <p class="hero__kicker">Senior AI Engineer — LLMs, Speech (ASR/TTS), Edge Inference</p>
-        <h1>Tarek Marrawi</h1>
-        <p class="hero__subline">I build production AI: ASR → LLM summarization, multilingual TTS, and edge deployment.</p>
-        <div class="hero__actions">
+        <p class="hero__kicker" id="hero-kicker">Senior AI Engineer — LLMs, Speech (ASR/TTS), Edge Inference</p>
+        <h1 id="hero-name">Tarek Marrawi</h1>
+        <p class="hero__subline" id="hero-subline">I build production AI: ASR → LLM summarization, multilingual TTS, and edge deployment.</p>
+        <div class="hero__actions" id="hero-actions">
           <a class="btn btn--primary" href="./Tarek_Marrawi_Senior_AI_Engineer_CV.pdf" download>Download CV</a>
           <a class="btn btn--secondary" href="https://github.com/your-username" target="_blank" rel="noopener">GitHub</a>
           <a class="btn btn--ghost" href="https://www.linkedin.com/in/tarek-marrawi" target="_blank" rel="noopener">LinkedIn</a>
@@ -88,9 +88,11 @@
         <h2 id="about-title">About</h2>
       </div>
       <div class="section__body">
-        <p>Senior AI Engineer and Technology Consultant with 13+ years delivering AI systems, speech/NLP solutions, and real-time simulation platforms across healthcare, industrial, and entertainment domains. Former CTO at Blockville, leading AI and 3D teams to build scalable automation pipelines.</p>
-        <p>I design, train, and deploy end-to-end AI: ASR, LLMs, TTS; on-device inference; cloud orchestration. I bridge product strategy with hands-on engineering to deliver measurable impact (automation, latency, cost).</p>
-        <div class="about__ctas">
+        <div id="about-content">
+          <p>Senior AI Engineer and Technology Consultant with 13+ years delivering AI systems, speech/NLP solutions, and real-time simulation platforms across healthcare, industrial, and entertainment domains. Former CTO at Blockville, leading AI and 3D teams to build scalable automation pipelines.</p>
+          <p>I design, train, and deploy end-to-end AI: ASR, LLMs, TTS; on-device inference; cloud orchestration. I bridge product strategy with hands-on engineering to deliver measurable impact (automation, latency, cost).</p>
+        </div>
+        <div class="about__ctas" id="about-actions">
           <a class="btn btn--primary" href="./Tarek_Marrawi_Senior_AI_Engineer_CV.pdf" download>Download CV</a>
           <a class="btn btn--secondary" href="https://github.com/your-username" target="_blank" rel="noopener">Portfolio (GitHub)</a>
         </div>
@@ -101,7 +103,7 @@
       <div class="section__heading">
         <h2 id="skills-title">Core Skills</h2>
       </div>
-      <div class="section__body skills-grid">
+      <div class="section__body skills-grid" id="skills-grid">
         <article class="skill-group">
           <h3>LLMs &amp; Language Systems</h3>
           <ul>
@@ -220,10 +222,10 @@
     <section id="experience" class="section section--experience" aria-labelledby="experience-title">
       <div class="section__heading">
         <h2 id="experience-title">Experience</h2>
-        <p class="section__hint">Condensed highlights from over a decade of building production AI and immersive systems.</p>
+        <p class="section__hint" id="experience-summary">Condensed highlights from over a decade of building production AI and immersive systems.</p>
       </div>
       <div class="section__body">
-        <ol class="timeline" aria-label="Experience timeline">
+        <ol class="timeline" aria-label="Experience timeline" id="experience-list">
           <li class="timeline__item">
             <div class="timeline__period">07/2024 – Present · Istanbul</div>
             <h3>AI &amp; Simulation Technology Consultant — Self-Employed</h3>
@@ -240,9 +242,9 @@
             <p>Delivered industrial digital twins (training/planning); modular simulation components; AI-assisted automation for camera pathing/segmentation.</p>
           </li>
         </ol>
-        <details class="timeline__more">
-          <summary>Earlier experience</summary>
-          <div class="timeline__earlier">
+        <details class="timeline__more" id="experience-more">
+          <summary id="experience-earlier-label">Earlier experience</summary>
+          <div class="timeline__earlier" id="experience-earlier">
             <p><strong>Sait Grup — Co-Founder / Sr. Software Engineer (2018–2021):</strong> Automation + early AI prototypes; led <em>MyTalep</em> (on-demand commerce platform).</p>
             <p><strong>Brainia Studio (Google Partner) — Software Engineer (2013–2018):</strong> Unity/WebGL titles with native Android/iOS integrations and telemetry.</p>
             <p><strong>Bayan — Software Engineer (Android) (2012–2013):</strong> High-performance Android apps with clean architecture.</p>
@@ -255,16 +257,16 @@
     <div class="footer__content">
       <div>
         <h2 id="contact-title">Let's collaborate</h2>
-        <p>Email: <a href="mailto:tarek.marrawi@hotmail.com">tarek.marrawi@hotmail.com</a></p>
-        <p>Location: Istanbul, Türkiye</p>
-        <p>Languages: Arabic (Native) · English (C1) · Turkish (B1)</p>
+        <p id="contact-email">Email: <a id="contact-email-link" href="mailto:tarek.marrawi@hotmail.com">tarek.marrawi@hotmail.com</a></p>
+        <p id="contact-location">Location: Istanbul, Türkiye</p>
+        <p id="contact-languages">Languages: Arabic (Native) · English (C1) · Turkish (B1)</p>
       </div>
-      <div class="footer__links" aria-label="Social links">
+      <div class="footer__links" aria-label="Social links" id="contact-links">
         <a class="btn btn--secondary" href="https://github.com/your-username" target="_blank" rel="noopener">GitHub</a>
         <a class="btn btn--ghost" href="https://www.linkedin.com/in/tarek-marrawi" target="_blank" rel="noopener">LinkedIn</a>
       </div>
     </div>
-    <p class="footer__note">© <span id="current-year"></span> Tarek Marrawi. Portfolio site crafted with accessibility, performance, and AI precision.</p>
+    <p class="footer__note" id="footer-note">© <span id="current-year"></span> Tarek Marrawi. Portfolio site crafted with accessibility, performance, and AI precision.</p>
   </footer>
   <script type="application/json" id="projects-boot">[{"id":"realvoice","title":"RealVoice — TTS Infrastructure & Orchestration","summary":"Kafka-like queue for large-scale TTS with prioritization, retries, and auditing.","description":"Designed a resilient orchestration layer for text-to-speech workloads with smart scheduling, GPU pooling, and audit trails. Integrated health dashboards and autoscaling to handle bursty enterprise demand.","tech":["Python","FastAPI","Redis","ONNX/ORT","Docker","Grafana"],"tags":["TTS","Edge","Infra","Cost"],"impact":">99% job success; burst-tolerant SLAs with live telemetry.","links":{"demo":"https://example.com/realvoice-demo","code":"https://github.com/your-username/realvoice","writeup":"https://example.com/realvoice-case-study"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675,"primaryLink":{"href":"https://example.com/realvoice-demo","label":"Watch orchestration demo"}},{"id":"phonemex-pro","title":"PhonemeX Pro — Offline Phoneme & Viseme Toolkit","summary":"Cross-platform phoneme extraction and lip-sync toolkit with eSpeak-NG integration.","description":"Led Unity native plugin development combining eSpeak-NG (WASM/native) with editor tooling for rapid voice calibration. Enabled studios to ship reliable lip-sync without cloud dependencies.","tech":["Unity","C#","eSpeak-NG"],"tags":["Speech","TTS","Phoneme"],"impact":"Offline, cross-voice alignment with configurable viseme curves.","links":{"demo":"https://example.com/phonemex-demo","code":null,"writeup":"https://example.com/phonemex-overview"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675,"primaryLink":{"href":"https://example.com/phonemex-demo","label":"Watch toolkit in action"}},{"id":"phonemeflow","title":"PhonemeFlow — Grapheme→Phoneme Transformer","summary":"Seq2seq phonemizer with compact runtime dictionaries and validation harness.","description":"Built multilingual G2P transformer with distilled runtime, beam search calibration, and lexicon export pipeline. Delivered evaluation harness for linguistic QA and benchmarking.","tech":["PyTorch","Transformers"],"tags":["NLP","Speech","Transformer"],"impact":"Accurate multilingual G2P with exportable dictionaries and QA automation.","links":{"demo":"https://example.com/phonemeflow-demo","code":"https://github.com/your-username/phonemeflow","writeup":"https://example.com/phonemeflow-insights"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675,"primaryLink":{"href":"https://github.com/your-username/phonemeflow","label":"Explore source code"}},{"id":"arabic-tts-dataset","title":"Arabic TTS Dataset — Semi-Automatic Alignment","summary":"Whisper-based alignment, diacritic handling, and QA filters for high-fidelity pairs.","description":"Automated Arabic speech-text alignment with Whisper variants, diacritic restoration, and human-in-loop QA surfaces. Delivered dataset packaging tools for reproducible curation.","tech":["Whisper","Python","PyTorch"],"tags":["TTS","Dataset","Arabic","Healthcare"],"impact":"Higher clarity/prosody and faster dataset creation cycles.","links":{"demo":null,"code":"https://github.com/your-username/arabic-tts-dataset","writeup":"https://example.com/arabic-tts-dataset"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675,"primaryLink":{"href":"https://github.com/your-username/arabic-tts-dataset","label":"Browse dataset repo"}},{"id":"ejaaz","title":"Ejaaz — Blinkist-style Summaries (Full Stack)","summary":"n8n pipelines for ingest→summarize→QA; TTS for audio and mobile playback.","description":"Designed content ingestion to LLM summarization pipeline with n8n, human QA loops, and multilingual TTS playback. Delivered Flutter mobile app and React admin for editorial insights.","tech":["n8n","Flutter","React+TS","Firebase","Chatterbox-TTS"],"tags":["LLM","TTS","Mobile","Workflow"],"impact":"Automated content factory with offline playback and editorial analytics.","links":{"demo":"https://example.com/ejaaz-demo","code":"https://github.com/your-username/ejaaz","writeup":"https://example.com/ejaaz-case-study"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675,"primaryLink":{"href":"https://example.com/ejaaz-case-study","label":"Read deployment case study"}},{"id":"edge-inference","title":"Edge Inference Pipelines — Mobile/WebGL","summary":"Quantized LLM/TTS with caching, offline fallback, and low-latency UI.","description":"Implemented ONNX/ORT edge runtime with quantization-aware scheduling and offline fallback packs. Delivered telemetry for latency budgets across Android, iOS, and WebGL clients.","tech":["ONNX/ORT","WebGL","Android/iOS","FastAPI"],"tags":["Edge","LLM","TTS","Latency"],"impact":">90% cost reduction and sub-second responses on-device.","links":{"demo":"https://example.com/edge-inference-demo","code":"https://github.com/your-username/edge-inference","writeup":"https://example.com/edge-inference-whitepaper"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675,"primaryLink":{"href":"https://github.com/your-username/edge-inference","label":"Inspect edge inference stack"}},{"id":"digital-twin","title":"Digital Twin Platforms — Industrial Training/Planning","summary":"CAD→interactive simulation with layout optimization and safety scenarios.","description":"Directed multi-site delivery of digital twin platforms integrating NVIDIA Omniverse pipelines, training modules, and telemetry dashboards to optimize plant operations and safety drills.","tech":["Unity","NVIDIA Omniverse","USD","C#"],"tags":["Simulation","Industrial","3D"],"impact":"Accelerated deployment timelines with higher realism and analytics.","links":{"demo":"coming-soon","code":null,"writeup":"https://example.com/digital-twin-overview"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","status":"coming-soon","imageWidth":1200,"imageHeight":675},{"id":"multi-agent-personas","title":"Multi-Agent Personas — Coordination & Evaluation","summary":"Agent collaboration with memory/coherence checks and dialogue metrics.","description":"Built evaluation framework for multi-agent personas with context memory, guardrails, and scoring dashboards. Enabled rapid experimentation with persona orchestration and prompt routing.","tech":["Python","LLM Orchestration","FastAPI"],"tags":["LLM","Multi-Agent","Evaluation"],"impact":"Improved task success and measurable dialogue coherence.","links":{"demo":"https://example.com/multi-agent-demo","code":"https://github.com/your-username/multi-agent-personas","writeup":"https://example.com/multi-agent-report"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675,"primaryLink":{"href":"https://example.com/multi-agent-demo","label":"See multi-agent walkthrough"}}]</script>
   <script defer src="scripts.js"></script>
