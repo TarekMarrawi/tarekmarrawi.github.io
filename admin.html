@@ -14,146 +14,199 @@
     <h1>Portfolio Admin Panel</h1>
     <p>Update the site content and project listings interactively, then export refreshed JSON files.</p>
   </header>
-  <main class="admin-main">
-    <section class="admin-section" aria-labelledby="content-heading">
-      <div class="section-header">
-        <h2 id="content-heading">Site content</h2>
-        <p>Edit the hero, about, skills, experience, and contact details.</p>
+  <div class="admin-layout">
+    <nav class="admin-nav" aria-label="Admin navigation">
+      <h2 class="admin-nav__title">Navigator</h2>
+      <div class="admin-nav__group" aria-labelledby="nav-content-heading">
+        <h3 id="nav-content-heading" class="admin-nav__heading">Site content</h3>
+        <ul class="admin-nav__list">
+          <li><button type="button" class="admin-nav__link is-active" data-page-target="hero">Hero</button></li>
+          <li><button type="button" class="admin-nav__link" data-page-target="about">About</button></li>
+          <li><button type="button" class="admin-nav__link" data-page-target="skills">Skills</button></li>
+          <li><button type="button" class="admin-nav__link" data-page-target="experience">Experience</button></li>
+          <li><button type="button" class="admin-nav__link" data-page-target="contact">Contact</button></li>
+          <li><button type="button" class="admin-nav__link" data-page-target="content-export">Export content</button></li>
+        </ul>
       </div>
-      <form id="content-form" class="admin-form" novalidate>
-        <fieldset>
-          <legend>Hero</legend>
-          <label>
-            Kicker
-            <input type="text" name="hero-kicker" required>
-          </label>
-          <label>
-            Name
-            <input type="text" name="hero-name" required>
-          </label>
-          <label>
-            Subline
-            <textarea name="hero-subline" rows="2" required></textarea>
-          </label>
-          <div class="repeater" data-repeater="hero-actions">
-            <div class="repeater__header">
-              <h3>Actions</h3>
-              <button type="button" class="btn btn--ghost" data-action="add-hero-action">Add action</button>
-            </div>
-            <div class="repeater__list" id="hero-actions-list"></div>
-          </div>
-        </fieldset>
+      <div class="admin-nav__group" aria-labelledby="nav-projects-heading">
+        <h3 id="nav-projects-heading" class="admin-nav__heading">Projects</h3>
+        <ul class="admin-nav__list">
+          <li><button type="button" class="admin-nav__link" data-page-target="projects">Manage projects</button></li>
+        </ul>
+      </div>
+    </nav>
 
-        <fieldset>
-          <legend>About</legend>
-          <label>
-            Paragraphs
-            <textarea name="about-paragraphs" rows="6" placeholder="Separate paragraphs with a blank line."></textarea>
-          </label>
-          <div class="repeater" data-repeater="about-actions">
-            <div class="repeater__header">
-              <h3>Calls to action</h3>
-              <button type="button" class="btn btn--ghost" data-action="add-about-action">Add action</button>
-            </div>
-            <div class="repeater__list" id="about-actions-list"></div>
+    <main class="admin-main">
+      <form id="content-form" class="admin-pages" novalidate>
+        <section class="admin-section" aria-labelledby="hero-heading" data-page="hero">
+          <div class="section-header">
+            <h2 id="hero-heading">Hero</h2>
+            <p>Edit the kicker, name, tagline, and call-to-action buttons.</p>
           </div>
-        </fieldset>
+          <fieldset aria-labelledby="hero-heading" id="content-hero">
+            <legend class="visually-hidden">Hero content</legend>
+            <label>
+              Kicker
+              <input type="text" name="hero-kicker" required>
+            </label>
+            <label>
+              Name
+              <input type="text" name="hero-name" required>
+            </label>
+            <label>
+              Subline
+              <textarea name="hero-subline" rows="2" required></textarea>
+            </label>
+            <div class="repeater" data-repeater="hero-actions">
+              <div class="repeater__header">
+                <h3>Actions</h3>
+                <button type="button" class="btn btn--ghost" data-action="add-hero-action">Add action</button>
+              </div>
+              <div class="repeater__list" id="hero-actions-list"></div>
+            </div>
+          </fieldset>
+        </section>
 
-        <fieldset>
-          <legend>Skills</legend>
-          <p class="hint">Each entry becomes a card with a title and bullet list.</p>
-          <div class="repeater" data-repeater="skills">
-            <div class="repeater__header">
-              <h3>Skill groups</h3>
-              <button type="button" class="btn btn--ghost" data-action="add-skill">Add skill group</button>
-            </div>
-            <div class="repeater__list" id="skills-list"></div>
+        <section class="admin-section" aria-labelledby="about-heading" data-page="about" hidden>
+          <div class="section-header">
+            <h2 id="about-heading">About</h2>
+            <p>Keep your bio up to date and curate optional calls to action.</p>
           </div>
-        </fieldset>
+          <fieldset aria-labelledby="about-heading" id="content-about">
+            <legend class="visually-hidden">About content</legend>
+            <label>
+              Paragraphs
+              <textarea name="about-paragraphs" rows="6" placeholder="Separate paragraphs with a blank line."></textarea>
+            </label>
+            <div class="repeater" data-repeater="about-actions">
+              <div class="repeater__header">
+                <h3>Calls to action</h3>
+                <button type="button" class="btn btn--ghost" data-action="add-about-action">Add action</button>
+              </div>
+              <div class="repeater__list" id="about-actions-list"></div>
+            </div>
+          </fieldset>
+        </section>
 
-        <fieldset>
-          <legend>Experience</legend>
-          <label>
-            Section summary
-            <textarea name="experience-summary" rows="2"></textarea>
-          </label>
-          <div class="repeater" data-repeater="experience">
-            <div class="repeater__header">
-              <h3>Recent roles</h3>
-              <button type="button" class="btn btn--ghost" data-action="add-experience">Add role</button>
-            </div>
-            <div class="repeater__list" id="experience-list"></div>
+        <section class="admin-section" aria-labelledby="skills-heading" data-page="skills" hidden>
+          <div class="section-header">
+            <h2 id="skills-heading">Skills</h2>
+            <p>Organise technology stacks and capabilities into reusable cards.</p>
           </div>
-          <label>
-            Earlier experience label
-            <input type="text" name="experience-earlier-label">
-          </label>
-          <div class="repeater" data-repeater="earlier">
-            <div class="repeater__header">
-              <h3>Earlier highlights</h3>
-              <button type="button" class="btn btn--ghost" data-action="add-earlier">Add highlight</button>
+          <fieldset aria-labelledby="skills-heading" id="content-skills">
+            <legend class="visually-hidden">Skills content</legend>
+            <p class="hint">Each entry becomes a card with a title and bullet list.</p>
+            <div class="repeater" data-repeater="skills">
+              <div class="repeater__header">
+                <h3>Skill groups</h3>
+                <button type="button" class="btn btn--ghost" data-action="add-skill">Add skill group</button>
+              </div>
+              <div class="repeater__list" id="skills-list"></div>
             </div>
-            <div class="repeater__list" id="earlier-list"></div>
-          </div>
-        </fieldset>
+          </fieldset>
+        </section>
 
-        <fieldset>
-          <legend>Contact</legend>
-          <label>
-            Section title
-            <input type="text" name="contact-title">
-          </label>
-          <label>
-            Owner name
-            <input type="text" name="contact-owner">
-          </label>
-          <label>
-            Email
-            <input type="email" name="contact-email">
-          </label>
-          <label>
-            Location
-            <input type="text" name="contact-location">
-          </label>
-          <label>
-            Languages
-            <input type="text" name="contact-languages">
-          </label>
-          <label>
-            Footer note
-            <textarea name="contact-note" rows="2"></textarea>
-          </label>
-          <div class="repeater" data-repeater="contact-actions">
-            <div class="repeater__header">
-              <h3>Links</h3>
-              <button type="button" class="btn btn--ghost" data-action="add-contact-action">Add link</button>
-            </div>
-            <div class="repeater__list" id="contact-actions-list"></div>
+        <section class="admin-section" aria-labelledby="experience-heading" data-page="experience" hidden>
+          <div class="section-header">
+            <h2 id="experience-heading">Experience</h2>
+            <p>Capture recent roles and earlier highlights to tell your career story.</p>
           </div>
-        </fieldset>
+          <fieldset aria-labelledby="experience-heading" id="content-experience">
+            <legend class="visually-hidden">Experience content</legend>
+            <label>
+              Section summary
+              <textarea name="experience-summary" rows="2"></textarea>
+            </label>
+            <div class="repeater" data-repeater="experience">
+              <div class="repeater__header">
+                <h3>Recent roles</h3>
+                <button type="button" class="btn btn--ghost" data-action="add-experience">Add role</button>
+              </div>
+              <div class="repeater__list" id="experience-list"></div>
+            </div>
+            <label>
+              Earlier experience label
+              <input type="text" name="experience-earlier-label">
+            </label>
+            <div class="repeater" data-repeater="earlier">
+              <div class="repeater__header">
+                <h3>Earlier highlights</h3>
+                <button type="button" class="btn btn--ghost" data-action="add-earlier">Add highlight</button>
+              </div>
+              <div class="repeater__list" id="earlier-list"></div>
+            </div>
+          </fieldset>
+        </section>
 
-        <div class="form-actions">
-          <button type="button" class="btn btn--primary" id="download-content">Download content.json</button>
-          <button type="button" class="btn" id="copy-content">Copy JSON</button>
-        </div>
+        <section class="admin-section" aria-labelledby="contact-heading" data-page="contact" hidden>
+          <div class="section-header">
+            <h2 id="contact-heading">Contact</h2>
+            <p>Refresh contact details, social profiles, and footer notes.</p>
+          </div>
+          <fieldset aria-labelledby="contact-heading" id="content-contact">
+            <legend class="visually-hidden">Contact content</legend>
+            <label>
+              Section title
+              <input type="text" name="contact-title">
+            </label>
+            <label>
+              Owner name
+              <input type="text" name="contact-owner">
+            </label>
+            <label>
+              Email
+              <input type="email" name="contact-email">
+            </label>
+            <label>
+              Location
+              <input type="text" name="contact-location">
+            </label>
+            <label>
+              Languages
+              <input type="text" name="contact-languages">
+            </label>
+            <label>
+              Footer note
+              <textarea name="contact-note" rows="2"></textarea>
+            </label>
+            <div class="repeater" data-repeater="contact-actions">
+              <div class="repeater__header">
+                <h3>Links</h3>
+                <button type="button" class="btn btn--ghost" data-action="add-contact-action">Add link</button>
+              </div>
+              <div class="repeater__list" id="contact-actions-list"></div>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="admin-section" aria-labelledby="content-export-heading" data-page="content-export" hidden>
+          <div class="section-header">
+            <h2 id="content-export-heading">Export site content</h2>
+            <p>Download or copy the assembled <code>content.json</code> file.</p>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn--primary" id="download-content">Download content.json</button>
+            <button type="button" class="btn" id="copy-content">Copy JSON</button>
+          </div>
+        </section>
       </form>
-    </section>
 
-    <section class="admin-section" aria-labelledby="projects-heading">
-      <div class="section-header">
-        <h2 id="projects-heading">Projects</h2>
-        <p>Manage the entries loaded from <code>projects.json</code>.</p>
-      </div>
-      <div class="section-toolbar">
-        <button type="button" class="btn btn--ghost" id="add-project">Add project</button>
-        <div class="toolbar-actions">
-          <button type="button" class="btn btn--primary" id="download-projects">Download projects.json</button>
-          <button type="button" class="btn" id="copy-projects">Copy JSON</button>
+      <section class="admin-section" aria-labelledby="projects-heading" data-page="projects" hidden>
+        <div class="section-header">
+          <h2 id="projects-heading">Projects</h2>
+          <p>Manage the entries loaded from <code>projects.json</code>.</p>
         </div>
-      </div>
-      <div id="projects-list" class="projects-list" aria-live="polite"></div>
-    </section>
-  </main>
+        <div class="section-toolbar">
+          <button type="button" class="btn btn--ghost" id="add-project">Add project</button>
+          <div class="toolbar-actions">
+            <button type="button" class="btn btn--primary" id="download-projects">Download projects.json</button>
+            <button type="button" class="btn" id="copy-projects">Copy JSON</button>
+          </div>
+        </div>
+        <div id="projects-list" class="projects-list" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
