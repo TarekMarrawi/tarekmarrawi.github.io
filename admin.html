@@ -9,10 +9,17 @@
   <link rel="preload" href="content.json" as="fetch" type="application/json" crossorigin="anonymous">
   <link rel="preload" href="projects.json" as="fetch" type="application/json" crossorigin="anonymous">
 </head>
-<body>
+<body class="auth-locked">
   <header class="admin-header">
     <h1>Portfolio Admin Panel</h1>
     <p>Update the site content and project listings interactively, then export refreshed JSON files.</p>
+    <div class="admin-status" role="status" aria-live="polite">
+      <span id="auth-user-label">Not authenticated</span>
+      <div class="admin-status__actions">
+        <button type="button" class="btn btn--ghost" id="open-auth">Sign in</button>
+        <button type="button" class="btn" id="sign-out" hidden>Sign out</button>
+      </div>
+    </div>
   </header>
   <div class="admin-layout">
     <nav class="admin-nav" aria-label="Admin navigation">
@@ -187,6 +194,7 @@
           <div class="form-actions">
             <button type="button" class="btn btn--primary" id="download-content">Download content.json</button>
             <button type="button" class="btn" id="copy-content">Copy JSON</button>
+            <button type="button" class="btn btn--success" id="publish-updates" disabled>Publish to GitHub</button>
           </div>
         </section>
       </form>
@@ -209,6 +217,20 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <div class="auth-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-heading">
+    <div class="auth-card">
+      <h2 id="auth-heading">Authenticate with GitHub</h2>
+      <p class="auth-description">Provide a GitHub personal access token with <code>repo</code> scope to unlock publishing from this admin panel.</p>
+      <form id="auth-form" novalidate>
+        <label class="auth-label" for="auth-token">Personal access token</label>
+        <input id="auth-token" name="token" type="password" autocomplete="off" required placeholder="ghp_...">
+        <p id="auth-status-message" class="auth-status-message" aria-live="polite"></p>
+        <button type="submit" class="btn btn--primary" id="auth-submit">Sign in</button>
+      </form>
+      <p class="auth-hint">Your token is stored only in this browser session and used to call the GitHub API directly.</p>
+    </div>
+  </div>
 
   <template id="action-item-template">
     <div class="action-item">
