@@ -75,19 +75,42 @@
     return li;
   }
 
-  function createLink(label, href) {
-    const link = document.createElement('a');
-    link.className = 'project-card__link';
-    link.textContent = label;
-    if (!href || href === '#' || href === 'coming-soon') {
-      link.setAttribute('aria-disabled', 'true');
-      link.tabIndex = -1;
-    } else {
-      link.href = href;
-      link.target = '_blank';
-      link.rel = 'noopener';
+  function normaliseLink(value, fallbackLabel = 'View project') {
+    if (typeof value === 'string') {
+      const href = value.trim();
+      if (!href || href === '#' || href === 'coming-soon') return null;
+      return { href, label: fallbackLabel };
     }
-    return link;
+    if (value && typeof value === 'object') {
+      const href = typeof value.href === 'string' ? value.href.trim() : '';
+      if (!href || href === '#' || href === 'coming-soon') return null;
+      const label =
+        typeof value.label === 'string' && value.label.trim()
+          ? value.label.trim()
+          : fallbackLabel;
+      return { href, label };
+    }
+    return null;
+  }
+
+  function resolvePrimaryLink(rawPrimaryLink, links = {}) {
+    const direct = normaliseLink(rawPrimaryLink, 'View project');
+    if (direct) return direct;
+
+    const safeLinks = typeof links === 'object' && links !== null ? links : {};
+    const priority = [
+      { key: 'primary', label: 'View project' },
+      { key: 'demo', label: 'View demo' },
+      { key: 'code', label: 'View code' },
+      { key: 'writeup', label: 'Read more' }
+    ];
+
+    for (const { key, label } of priority) {
+      const candidate = normaliseLink(safeLinks[key], label);
+      if (candidate) return candidate;
+    }
+
+    return null;
   }
 
   function createProjectCard(project) {
@@ -99,7 +122,6 @@
     const description = card.querySelector('.project-card__description');
     const techList = card.querySelector('.project-card__tech');
     const impact = card.querySelector('.project-card__impact');
-    const links = card.querySelector('.project-card__links');
     const status = card.querySelector('.project-card__status');
 
     const imageSrc = project.image || PLACEHOLDER_IMAGE;
@@ -118,23 +140,39 @@
     techList.innerHTML = '';
     (project.tech || []).forEach((item) => techList.appendChild(createTechBadge(item)));
 
-    links.innerHTML = '';
-    const linkLabels = {
-      demo: 'Demo',
-      code: 'Code',
-      writeup: 'Write-up'
-    };
-    let hasLiveLink = false;
-    Object.entries(linkLabels).forEach(([key, label]) => {
-      const href = project.links?.[key];
-      const linkEl = createLink(label, href);
-      if (href && href !== 'coming-soon' && href !== '#') {
-        hasLiveLink = true;
-      }
-      links.appendChild(linkEl);
-    });
+    const cardLink = card;
+    const primaryLink = project.primaryLink || null;
+    const linkLabel = primaryLink?.label || 'View project';
 
-    if (project.status === 'coming-soon' || !hasLiveLink) {
+    if (primaryLink?.href) {
+      cardLink.href = primaryLink.href;
+      cardLink.target = '_blank';
+      cardLink.rel = 'noopener';
+      cardLink.classList.remove('project-card--disabled');
+      cardLink.removeAttribute('aria-disabled');
+      cardLink.setAttribute('aria-label', `${linkLabel} — ${project.title || 'Project'}`);
+      cardLink.tabIndex = 0;
+      cardLink.title = `${project.title || 'Project'} — ${linkLabel}`;
+      if (project.status === 'coming-soon') {
+        status.textContent = 'Coming soon';
+      } else {
+        status.textContent = '';
+      }
+      status.hidden = project.status === 'coming-soon' ? false : true;
+    } else {
+      cardLink.removeAttribute('href');
+      cardLink.removeAttribute('target');
+      cardLink.removeAttribute('rel');
+      cardLink.classList.add('project-card--disabled');
+      cardLink.setAttribute('aria-disabled', 'true');
+      cardLink.removeAttribute('aria-label');
+      cardLink.removeAttribute('title');
+      cardLink.tabIndex = -1;
+      if (project.status === 'coming-soon') {
+        status.textContent = 'Coming soon';
+      } else {
+        status.textContent = 'Link coming soon';
+      }
       status.hidden = false;
     }
 
@@ -285,6 +323,18 @@
         imageWidth: item.imageWidth || 1200,
         imageHeight: item.imageHeight || 675
       }))
+      .map((item) => {
+        const primaryLink = resolvePrimaryLink(item.primaryLink, item.links);
+        if (primaryLink) {
+          return {
+            ...item,
+            primaryLink
+          };
+        }
+        const clone = { ...item };
+        delete clone.primaryLink;
+        return clone;
+      })
       .slice(0, 20);
   }
 
