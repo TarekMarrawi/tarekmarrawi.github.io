@@ -2,7 +2,6 @@
 (function () {
   const root = document.documentElement;
   const themeToggle = document.getElementById('theme-toggle');
-  const sectionNav = document.querySelector('.section-nav');
   const primaryNav = document.querySelector('.primary-nav');
   const projectsGrid = document.getElementById('projects-grid');
   const projectsFallback = document.getElementById('projects-fallback');
@@ -735,7 +734,6 @@
     });
     if (currentYearEl) currentYearEl.textContent = new Date().getFullYear().toString();
     initSmoothNav(primaryNav);
-    initSmoothNav(sectionNav);
     initObserver();
     initFilters();
     fetchContent();
