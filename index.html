@@ -59,9 +59,9 @@
     </div>
     <div class="hero" role="presentation">
       <div class="hero__text">
-        <p class="hero__kicker">Senior AI Engineer — LLMs, Speech (ASR/TTS), Edge Inference</p>
-        <h1>Tarek Marrawi</h1>
-        <p class="hero__subline">I build production AI: ASR → LLM summarization, multilingual TTS, and edge deployment.</p>
+        <p class="hero__kicker" data-editable="hero-kicker" data-label="Hero kicker">Senior AI Engineer — LLMs, Speech (ASR/TTS), Edge Inference</p>
+        <h1 data-editable="hero-name" data-label="Hero name">Tarek Marrawi</h1>
+        <p class="hero__subline" data-editable="hero-subline" data-label="Hero subtitle" data-multiline="true">I build production AI: ASR → LLM summarization, multilingual TTS, and edge deployment.</p>
         <div class="hero__actions">
           <a class="btn btn--primary" href="./Tarek_Marrawi_Senior_AI_Engineer_CV.pdf" download>Download CV</a>
           <a class="btn btn--secondary" href="https://github.com/your-username" target="_blank" rel="noopener">GitHub</a>
@@ -88,8 +88,8 @@
         <h2 id="about-title">About</h2>
       </div>
       <div class="section__body">
-        <p>Senior AI Engineer and Technology Consultant with 13+ years delivering AI systems, speech/NLP solutions, and real-time simulation platforms across healthcare, industrial, and entertainment domains. Former CTO at Blockville, leading AI and 3D teams to build scalable automation pipelines.</p>
-        <p>I design, train, and deploy end-to-end AI: ASR, LLMs, TTS; on-device inference; cloud orchestration. I bridge product strategy with hands-on engineering to deliver measurable impact (automation, latency, cost).</p>
+        <p data-editable="about-paragraph-1" data-label="About paragraph 1" data-multiline="true">Senior AI Engineer and Technology Consultant with 13+ years delivering AI systems, speech/NLP solutions, and real-time simulation platforms across healthcare, industrial, and entertainment domains. Former CTO at Blockville, leading AI and 3D teams to build scalable automation pipelines.</p>
+        <p data-editable="about-paragraph-2" data-label="About paragraph 2" data-multiline="true">I design, train, and deploy end-to-end AI: ASR, LLMs, TTS; on-device inference; cloud orchestration. I bridge product strategy with hands-on engineering to deliver measurable impact (automation, latency, cost).</p>
         <div class="about__ctas">
           <a class="btn btn--primary" href="./Tarek_Marrawi_Senior_AI_Engineer_CV.pdf" download>Download CV</a>
           <a class="btn btn--secondary" href="https://github.com/your-username" target="_blank" rel="noopener">Portfolio (GitHub)</a>
@@ -167,8 +167,8 @@
 
     <section id="projects" class="section section--projects" aria-labelledby="projects-title">
       <div class="section__heading">
-        <h2 id="projects-title">Featured Projects</h2>
-        <p class="section__hint">Filter by focus to explore TTS systems, LLM orchestration, edge deployments, and more.</p>
+        <h2 id="projects-title" data-editable="projects-heading" data-label="Projects heading">Featured Projects</h2>
+        <p class="section__hint" data-editable="projects-hint" data-label="Projects hint" data-multiline="true">Filter by focus to explore TTS systems, LLM orchestration, edge deployments, and more.</p>
       </div>
       <div class="section__body">
         <div class="filter-bar" role="toolbar" aria-label="Project filters">
@@ -220,8 +220,8 @@
 
     <section id="experience" class="section section--experience" aria-labelledby="experience-title">
       <div class="section__heading">
-        <h2 id="experience-title">Experience</h2>
-        <p class="section__hint">Condensed highlights from over a decade of building production AI and immersive systems.</p>
+        <h2 id="experience-title" data-editable="experience-heading" data-label="Experience heading">Experience</h2>
+        <p class="section__hint" data-editable="experience-hint" data-label="Experience hint" data-multiline="true">Condensed highlights from over a decade of building production AI and immersive systems.</p>
       </div>
       <div class="section__body">
         <ol class="timeline" aria-label="Experience timeline">
@@ -255,10 +255,10 @@
   <footer id="contact" class="site-footer" aria-labelledby="contact-title">
     <div class="footer__content">
       <div>
-        <h2 id="contact-title">Let's collaborate</h2>
+        <h2 id="contact-title" data-editable="contact-heading" data-label="Contact heading">Let's collaborate</h2>
         <p>Email: <a href="mailto:tarek.marrawi@hotmail.com">tarek.marrawi@hotmail.com</a></p>
-        <p>Location: Istanbul, Türkiye</p>
-        <p>Languages: Arabic (Native) · English (C1) · Turkish (B1)</p>
+        <p data-editable="contact-location" data-label="Contact location">Location: Istanbul, Türkiye</p>
+        <p data-editable="contact-languages" data-label="Contact languages" data-multiline="true">Languages: Arabic (Native) · English (C1) · Turkish (B1)</p>
       </div>
       <div class="footer__links" aria-label="Social links">
         <a class="btn btn--secondary" href="https://github.com/your-username" target="_blank" rel="noopener">GitHub</a>
@@ -267,6 +267,26 @@
     </div>
     <p class="footer__note">© <span id="current-year"></span> Tarek Marrawi. Portfolio site crafted with accessibility, performance, and AI precision.</p>
   </footer>
+  <button id="admin-toggle" class="admin-toggle" type="button" aria-expanded="false" aria-controls="admin-panel">
+    ✎ Edit content
+  </button>
+  <div id="admin-panel" class="admin-panel" hidden>
+    <div class="admin-panel__backdrop" data-admin-backdrop></div>
+    <div class="admin-panel__dialog" role="dialog" aria-modal="true" aria-labelledby="admin-panel-title">
+      <header class="admin-panel__header">
+        <h2 id="admin-panel-title">Edit site content</h2>
+        <button type="button" class="admin-panel__close" data-admin-close aria-label="Close editor">×</button>
+      </header>
+      <form data-admin-form class="admin-panel__form">
+        <p class="admin-panel__note">Changes are saved to your browser only.</p>
+        <div class="admin-panel__fields" data-admin-fields></div>
+        <div class="admin-panel__actions">
+          <button type="submit" class="btn btn--primary">Save changes</button>
+          <button type="button" class="btn btn--ghost" data-admin-reset>Reset to defaults</button>
+        </div>
+      </form>
+    </div>
+  </div>
   <script type="application/json" id="projects-boot">[{"id":"realvoice","title":"RealVoice — TTS Infrastructure & Orchestration","summary":"Kafka-like queue for large-scale TTS with prioritization, retries, and auditing.","description":"Designed a resilient orchestration layer for text-to-speech workloads with smart scheduling, GPU pooling, and audit trails. Integrated health dashboards and autoscaling to handle bursty enterprise demand.","tech":["Python","FastAPI","Redis","ONNX/ORT","Docker","Grafana"],"tags":["TTS","Edge","Infra","Cost"],"impact":">99% job success; burst-tolerant SLAs with live telemetry.","links":{"demo":"https://example.com/realvoice-demo","code":"https://github.com/your-username/realvoice","writeup":"https://example.com/realvoice-case-study"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675},{"id":"phonemex-pro","title":"PhonemeX Pro — Offline Phoneme & Viseme Toolkit","summary":"Cross-platform phoneme extraction and lip-sync toolkit with eSpeak-NG integration.","description":"Led Unity native plugin development combining eSpeak-NG (WASM/native) with editor tooling for rapid voice calibration. Enabled studios to ship reliable lip-sync without cloud dependencies.","tech":["Unity","C#","eSpeak-NG"],"tags":["Speech","TTS","Phoneme"],"impact":"Offline, cross-voice alignment with configurable viseme curves.","links":{"demo":"https://example.com/phonemex-demo","code":null,"writeup":"https://example.com/phonemex-overview"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675},{"id":"phonemeflow","title":"PhonemeFlow — Grapheme→Phoneme Transformer","summary":"Seq2seq phonemizer with compact runtime dictionaries and validation harness.","description":"Built multilingual G2P transformer with distilled runtime, beam search calibration, and lexicon export pipeline. Delivered evaluation harness for linguistic QA and benchmarking.","tech":["PyTorch","Transformers"],"tags":["NLP","Speech","Transformer"],"impact":"Accurate multilingual G2P with exportable dictionaries and QA automation.","links":{"demo":"https://example.com/phonemeflow-demo","code":"https://github.com/your-username/phonemeflow","writeup":"https://example.com/phonemeflow-insights"},"image":"data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/","imageWidth":1200,"imageHeight":675}]</script>
   <script defer src="scripts.js"></script>
 </body>

@@ -10,6 +10,13 @@
   const template = document.getElementById('project-card-template');
   const skeletonTemplate = document.getElementById('project-skeleton-template');
   const bootScript = document.getElementById('projects-boot');
+  const adminToggle = document.getElementById('admin-toggle');
+  const adminPanel = document.getElementById('admin-panel');
+  const adminForm = adminPanel?.querySelector('[data-admin-form]');
+  const adminFields = adminPanel?.querySelector('[data-admin-fields]');
+  const adminClose = adminPanel?.querySelector('[data-admin-close]');
+  const adminReset = adminPanel?.querySelector('[data-admin-reset]');
+  const adminBackdrop = adminPanel?.querySelector('[data-admin-backdrop]');
   const currentYearEl = document.getElementById('current-year');
   const filterButtons = document.querySelectorAll('.filter-btn');
   const sections = Array.from(document.querySelectorAll('main section, footer#contact'));
@@ -19,6 +26,10 @@
   const CACHE_KEY = 'projects:v1';
   const CACHE_VERSION = 'v1';
   const PLACEHOLDER_IMAGE = 'data:image/webp;base64,UklGRrAjAABXRUJQVlA4IKQjAAAQZQKdASqwBKMCPm02l0ikIyIiIVO6CIANiWlu/HRW0+Af2r9+/ZTob8Mgm/+hI/369h/uP8oC//+n/uQO4j//5Gg7v8G/';
+  const ADMIN_STORAGE_KEY = 'tarekmarrawi-content:v1';
+  const ADMIN_STORAGE_VERSION = '1';
+  const editableEntries = new Map();
+  let lastFocusedAdminTrigger = null;
   const requestIdle = window.requestIdleCallback || function (cb) {
     return window.setTimeout(() => {
       cb({ didTimeout: true, timeRemaining: () => 0 });
@@ -350,6 +361,179 @@
       });
   }
 
+  function readAdminContent() {
+    try {
+      const raw = localStorage.getItem(ADMIN_STORAGE_KEY);
+      if (!raw) return {};
+      const payload = JSON.parse(raw);
+      if (payload.version !== ADMIN_STORAGE_VERSION || typeof payload.values !== 'object' || payload.values === null) {
+        return {};
+      }
+      return payload.values;
+    } catch (error) {
+      console.warn('Unable to read saved content', error);
+      return {};
+    }
+  }
+
+  function writeAdminContent(values) {
+    try {
+      const payload = {
+        version: ADMIN_STORAGE_VERSION,
+        values
+      };
+      localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(payload));
+    } catch (error) {
+      console.warn('Unable to persist updated content', error);
+    }
+  }
+
+  function gatherEditableEntries(values) {
+    const nodes = document.querySelectorAll('[data-editable]');
+    nodes.forEach((node) => {
+      if (!(node instanceof HTMLElement)) return;
+      const key = node.dataset.editable;
+      if (!key || editableEntries.has(key)) return;
+      const label = node.dataset.label || key;
+      const multiline = node.dataset.multiline === 'true';
+      const original = node.textContent || '';
+      editableEntries.set(key, {
+        element: node,
+        label,
+        multiline,
+        original
+      });
+      const savedValue = values?.[key];
+      if (typeof savedValue === 'string') {
+        node.textContent = savedValue;
+      }
+    });
+  }
+
+  function renderAdminFields(values) {
+    if (!adminFields) return;
+    adminFields.replaceChildren();
+    editableEntries.forEach((entry, key) => {
+      const wrapper = document.createElement('label');
+      wrapper.className = 'admin-panel__field';
+
+      const caption = document.createElement('span');
+      caption.className = 'admin-panel__label';
+      caption.textContent = entry.label;
+      wrapper.appendChild(caption);
+
+      let control;
+      if (entry.multiline) {
+        control = document.createElement('textarea');
+        control.rows = 3;
+      } else {
+        control = document.createElement('input');
+        control.type = 'text';
+      }
+      control.name = key;
+      const savedValue = values?.[key];
+      control.value = typeof savedValue === 'string' ? savedValue : entry.element.textContent || '';
+      control.dataset.adminInput = 'true';
+      wrapper.appendChild(control);
+
+      adminFields.appendChild(wrapper);
+    });
+  }
+
+  function closeAdminPanel() {
+    if (!adminPanel) return;
+    adminPanel.hidden = true;
+    adminToggle?.setAttribute('aria-expanded', 'false');
+    document.body.style.removeProperty('overflow');
+    document.removeEventListener('keydown', handleAdminKeydown);
+    if (lastFocusedAdminTrigger instanceof HTMLElement) {
+      lastFocusedAdminTrigger.focus();
+    } else {
+      adminToggle?.focus();
+    }
+  }
+
+  function handleAdminKeydown(event) {
+    if (event.key === 'Escape') {
+      closeAdminPanel();
+    }
+  }
+
+  function openAdminPanel() {
+    if (!adminPanel) return;
+    lastFocusedAdminTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : adminToggle;
+    renderAdminFields(readAdminContent());
+    adminPanel.hidden = false;
+    adminToggle?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    const firstInput = adminPanel.querySelector('[data-admin-input]');
+    if (firstInput instanceof HTMLElement) {
+      firstInput.focus();
+    }
+    document.addEventListener('keydown', handleAdminKeydown);
+  }
+
+  function toggleAdminPanel() {
+    if (!adminPanel) return;
+    if (adminPanel.hidden) {
+      openAdminPanel();
+    } else {
+      closeAdminPanel();
+    }
+  }
+
+  function saveAdminContent(event) {
+    event.preventDefault();
+    if (!adminForm) return;
+    const formData = new FormData(adminForm);
+    const values = {};
+    editableEntries.forEach((entry, key) => {
+      const value = formData.get(key);
+      if (typeof value === 'string') {
+        entry.element.textContent = value;
+        values[key] = value;
+      }
+    });
+    writeAdminContent(values);
+    renderAdminFields(values);
+    closeAdminPanel();
+  }
+
+  function resetAdminContent() {
+    try {
+      localStorage.removeItem(ADMIN_STORAGE_KEY);
+    } catch (error) {
+      console.warn('Unable to clear saved content', error);
+    }
+    editableEntries.forEach((entry) => {
+      entry.element.textContent = entry.original;
+    });
+    renderAdminFields({});
+  }
+
+  function initAdminPanel() {
+    const savedValues = readAdminContent();
+    gatherEditableEntries(savedValues);
+
+    if (!adminPanel || !adminToggle || !adminForm || !adminFields) {
+      return;
+    }
+
+    if (!editableEntries.size) {
+      adminToggle.hidden = true;
+      return;
+    }
+
+    renderAdminFields(savedValues);
+
+    adminToggle.addEventListener('click', toggleAdminPanel);
+    adminForm.addEventListener('submit', saveAdminContent);
+
+    adminClose?.addEventListener('click', closeAdminPanel);
+    adminBackdrop?.addEventListener('click', closeAdminPanel);
+    adminReset?.addEventListener('click', resetAdminContent);
+  }
+
   function updateActiveNav(entries) {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -388,6 +572,7 @@
 
   function init() {
     initTheme();
+    initAdminPanel();
     themeToggle?.addEventListener('click', toggleTheme);
     prefersDark.addEventListener('change', (event) => {
       if (!localStorage.getItem(THEME_KEY)) {
