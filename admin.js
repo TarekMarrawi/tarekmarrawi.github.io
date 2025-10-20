@@ -26,6 +26,8 @@ const pageButtons = Array.from(document.querySelectorAll('[data-page-target]'));
 const pageSections = Array.from(document.querySelectorAll('[data-page]'));
 let activePage = null;
 
+const DEFAULT_BANNER_MESSAGE = 'This portfolio is under construction and not all information is available yet.';
+
 const authOverlay = document.getElementById('auth-overlay');
 const authForm = document.getElementById('auth-form');
 const authTokenInput = document.getElementById('auth-token');
@@ -557,6 +559,17 @@ function moveItem(item, direction) {
 }
 
 function populateContentForm(content = {}) {
+  const banner = content.banner || {};
+  const bannerEnabledField = contentForm?.elements['banner-enabled'];
+  const bannerMessageField = contentForm?.elements['banner-message'];
+  if (bannerEnabledField) {
+    bannerEnabledField.checked = Boolean(banner.enabled);
+  }
+  if (bannerMessageField) {
+    const storedMessage = typeof banner.message === 'string' ? banner.message : DEFAULT_BANNER_MESSAGE;
+    bannerMessageField.value = storedMessage;
+  }
+
   const hero = content.hero || {};
   contentForm.elements['hero-kicker'].value = hero.kicker || '';
   contentForm.elements['hero-name'].value = hero.name || '';
@@ -641,6 +654,16 @@ function populateProjects(projects = []) {
 }
 
 function collectContentData() {
+  const bannerEnabledField = contentForm.elements['banner-enabled'];
+  const bannerMessageField = contentForm.elements['banner-message'];
+  const rawBannerMessage = bannerMessageField ? bannerMessageField.value : '';
+  const bannerMessage = typeof rawBannerMessage === 'string' ? rawBannerMessage.trim() : '';
+  const banner = {
+    enabled: Boolean(bannerEnabledField?.checked),
+    variant: 'warning',
+    message: bannerMessage || DEFAULT_BANNER_MESSAGE
+  };
+
   const paragraphsValue = contentForm.elements['about-paragraphs'].value;
   const paragraphs = paragraphsValue
     .split(/\n\s*\n/)
@@ -691,7 +714,7 @@ function collectContentData() {
     note: contentForm.elements['contact-note'].value.trim(),
     links: collectActionList(contactActionsList)
   };
-  return { hero, about, skills, experience, contact };
+  return { banner, hero, about, skills, experience, contact };
 }
 
 function collectProjectsData() {

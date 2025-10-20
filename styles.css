@@ -95,6 +95,33 @@ ul {
   transform: translateY(0);
 }
 
+.site-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-banner::before {
+  content: "⚠️";
+  font-size: 1.05rem;
+}
+
+.site-banner--warning {
+  background: #fff4d3;
+  color: #5b3200;
+}
+
+[data-theme="dark"] .site-banner--warning {
+  background: rgba(255, 183, 77, 0.2);
+  color: #ffd48a;
+}
+
 .site-header {
   background: linear-gradient(160deg, var(--color-surface), var(--color-elevated));
   padding-bottom: 1.5rem;

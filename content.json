@@ -1,4 +1,9 @@
 {
+  "banner": {
+    "enabled": true,
+    "variant": "warning",
+    "message": "This portfolio is under construction and not all information is available yet."
+  },
   "hero": {
     "kicker": "Senior AI Engineer — LLMs, Speech (ASR/TTS), Edge Inference",
     "name": "Tarek Marrawi",
